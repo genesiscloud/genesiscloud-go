@@ -1,0 +1,7 @@
+package: genesiscloud
+generate:
+  client: true
+output: ../client.gen.go # relative to codegen.go
+compatibility:
+  always-prefix-enum-values: true
+  disable-required-readonly-as-pointer: true

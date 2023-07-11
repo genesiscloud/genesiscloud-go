@@ -1,0 +1,32 @@
+package: genesiscloud
+generate:
+  models: true
+output: ../types.gen.go # relative to codegen.go
+output-options:
+  user-templates:
+    # extended from https://github.com/deepmap/oapi-codegen/blob/f4cf8f9a570380c24c6ba03ae04b9393cf120692/pkg/codegen/templates/constants.tmpl
+    constants.tmpl: |
+      {{- if gt (len .SecuritySchemeProviderNames) 0 }}
+      const (
+      {{range $ProviderName := .SecuritySchemeProviderNames}}
+          {{- $ProviderName | sanitizeGoIdentity | ucFirst}}Scopes = "{{$ProviderName}}.Scopes"
+      {{end}}
+      )
+      {{end}}
+      {{range $Enum := .EnumDefinitions}}
+      // Defines values for {{$Enum.TypeName}}.
+      const (
+      {{range $name, $value := $Enum.GetValues}}
+        {{$name}} {{$Enum.TypeName}} = {{$Enum.ValueWrapper}}{{$value}}{{$Enum.ValueWrapper -}}
+      {{end}}
+      )
+      var All{{$Enum.TypeName}}s = []{{$Enum.TypeName}}{
+      {{range $name, $value := $Enum.GetValues -}}
+        {{$name}},
+      {{end}}
+      }
+      {{end}}
+
+compatibility:
+  always-prefix-enum-values: true
+  disable-required-readonly-as-pointer: true
