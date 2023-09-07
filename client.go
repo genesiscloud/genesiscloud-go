@@ -6,7 +6,7 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 )
 
-const DefaultEndpoint = "https://api.genesiscloud.com"
+const DefaultEndpoint = "https://api.genesiscloud.com/compute/v1"
 
 type ClientConfig struct {
 	Endpoint string

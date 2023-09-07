@@ -29,4 +29,3 @@ output-options:
 
 compatibility:
   always-prefix-enum-values: true
-  disable-required-readonly-as-pointer: true
