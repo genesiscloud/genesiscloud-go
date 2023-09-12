@@ -246,7 +246,7 @@ type FloatingIP struct {
 	Name string `json:"name"`
 
 	// Region The region identifier.
-	Region    *Region   `json:"region,omitempty"`
+	Region    Region    `json:"region"`
 	UpdatedAt Timestamp `json:"updated_at"`
 
 	// Version The IP version of the floating IP.
@@ -741,7 +741,7 @@ type CreateInstanceJSONBody struct {
 	PublicIpType *InstancePublicIPType `json:"public_ip_type,omitempty"`
 
 	// Region The region identifier.
-	Region *Region `json:"region,omitempty"`
+	Region Region `json:"region"`
 
 	// SecurityGroups An array of security group ids.
 	// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
@@ -810,7 +810,7 @@ type CreateSecurityGroupJSONBody struct {
 	Name string `json:"name"`
 
 	// Region The region identifier.
-	Region *Region `json:"region,omitempty"`
+	Region Region `json:"region"`
 
 	// Rules The list of rules of the security group.
 	Rules []SecurityGroupRule `json:"rules"`
@@ -870,16 +870,19 @@ type ListVolumesParams struct {
 // CreateVolumeJSONBody defines parameters for CreateVolume.
 type CreateVolumeJSONBody struct {
 	// Description The human-readable description set for the volume.
-	Description string `json:"description"`
+	Description *string `json:"description,omitempty"`
 
 	// Name The human-readable name set for the volume.
 	Name string `json:"name"`
 
 	// Region The region identifier.
-	Region *Region `json:"region,omitempty"`
+	Region Region `json:"region"`
 
 	// Size The storage size of this volume given in GiB (Min: 1GiB).
 	Size int `json:"size"`
+
+	// Type The volume type.
+	Type *VolumeType `json:"type,omitempty"`
 }
 
 // UpdateVolumeJSONBody defines parameters for UpdateVolume.
