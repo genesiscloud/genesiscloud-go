@@ -722,7 +722,7 @@ type CreateInstanceJSONBody struct {
 		// It is limited to 64 KiB in size. You can use it to configure your instance, e.g. installing the **NVIDIA GPU driver**.
 		// Learn more about [startup scripts and installing the GPU driver](https://support.com/support/solutions/articles/47001122478).
 		StartupScript *string           `json:"startup_script,omitempty"`
-		UserData      *InstanceUserData `json:"userData,omitempty"`
+		UserData      *InstanceUserData `json:"user_data,omitempty"`
 	} `json:"metadata,omitempty"`
 
 	// Name The human-readable name set for the instance.
