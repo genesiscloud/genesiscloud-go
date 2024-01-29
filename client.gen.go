@@ -92,6 +92,9 @@ type ClientInterface interface {
 	// GetInstancesAvailability request
 	GetInstancesAvailability(ctx context.Context, region Region, params *GetInstancesAvailabilityParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListCatalog request
+	ListCatalog(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListFloatingIPs request
 	ListFloatingIPs(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -218,6 +221,18 @@ type ClientInterface interface {
 
 func (c *Client) GetInstancesAvailability(ctx context.Context, region Region, params *GetInstancesAvailabilityParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetInstancesAvailabilityRequest(c.Server, region, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListCatalog(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListCatalogRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -800,6 +815,71 @@ func NewGetInstancesAvailabilityRequest(server string, region Region, params *Ge
 		if params.Placement != nil {
 
 			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "placement", runtime.ParamLocationQuery, *params.Placement); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListCatalogRequest generates requests for ListCatalog
+func NewListCatalogRequest(server string, params *ListCatalogParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/catalog")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page", runtime.ParamLocationQuery, *params.Page); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "per_page", runtime.ParamLocationQuery, *params.PerPage); err != nil {
 				return nil, err
 			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
 				return nil, err
@@ -2384,6 +2464,9 @@ type ClientWithResponsesInterface interface {
 	// GetInstancesAvailabilityWithResponse request
 	GetInstancesAvailabilityWithResponse(ctx context.Context, region Region, params *GetInstancesAvailabilityParams, reqEditors ...RequestEditorFn) (*GetInstancesAvailabilityResponse, error)
 
+	// ListCatalogWithResponse request
+	ListCatalogWithResponse(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*ListCatalogResponse, error)
+
 	// ListFloatingIPsWithResponse request
 	ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error)
 
@@ -2525,6 +2608,29 @@ func (r GetInstancesAvailabilityResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetInstancesAvailabilityResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListCatalogResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PaginatedCatalogResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListCatalogResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListCatalogResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3292,6 +3398,15 @@ func (c *ClientWithResponses) GetInstancesAvailabilityWithResponse(ctx context.C
 	return ParseGetInstancesAvailabilityResponse(rsp)
 }
 
+// ListCatalogWithResponse request returning *ListCatalogResponse
+func (c *ClientWithResponses) ListCatalogWithResponse(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*ListCatalogResponse, error) {
+	rsp, err := c.ListCatalog(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListCatalogResponse(rsp)
+}
+
 // ListFloatingIPsWithResponse request returning *ListFloatingIPsResponse
 func (c *ClientWithResponses) ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error) {
 	rsp, err := c.ListFloatingIPs(ctx, params, reqEditors...)
@@ -3701,6 +3816,39 @@ func ParseGetInstancesAvailabilityResponse(rsp *http.Response) (*GetInstancesAva
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest InstancesAvailabilityResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListCatalogResponse parses an HTTP response from a ListCatalogWithResponse call
+func ParseListCatalogResponse(rsp *http.Response) (*ListCatalogResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListCatalogResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PaginatedCatalogResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

@@ -216,6 +216,36 @@ var AllCreateFloatingIPJSONBodyVersions = []CreateFloatingIPJSONBodyVersion{
 	CreateFloatingIPJSONBodyVersionIpv6,
 }
 
+// Catalog defines model for Catalog.
+type Catalog struct {
+	BaseImageIds []string  `json:"base_image_ids"`
+	CreatedAt    Timestamp `json:"created_at"`
+
+	// Description The human-readable description for the catalog.
+	Description string        `json:"description"`
+	Fields      CatalogFields `json:"fields"`
+
+	// Id A unique identifier for each catalog. This is automatically generated.
+	Id string `json:"id"`
+
+	// LogoUrl The url of the catalog
+	LogoUrl string `json:"logo_url"`
+
+	// Name The human-readable name for the catalog.
+	Name string `json:"name"`
+
+	// RequiresDriver The image catalog requires driver
+	RequiresDriver bool `json:"requires_driver"`
+}
+
+// CatalogFields defines model for Catalog.Fields.
+type CatalogFields = []struct {
+	Env   string `json:"env"`
+	Key   string `json:"key"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
+}
+
 // Error defines model for Error.
 type Error struct {
 	// Code The Genesis Cloud error code.
@@ -574,6 +604,14 @@ type InstanceListActionsResponse struct {
 // InstancesAvailabilityResponse defines model for InstancesAvailabilityResponse.
 type InstancesAvailabilityResponse = InstancesAvailability
 
+// PaginatedCatalogResponse defines model for PaginatedCatalogResponse.
+type PaginatedCatalogResponse struct {
+	Catalog    []Catalog `json:"catalog"`
+	Page       int       `json:"page"`
+	PerPage    int       `json:"per_page"`
+	TotalCount int       `json:"total_count"`
+}
+
 // PaginatedFloatingIPsResponse defines model for PaginatedFloatingIPsResponse.
 type PaginatedFloatingIPsResponse struct {
 	FloatingIps []FloatingIP `json:"floating_ips"`
@@ -661,6 +699,12 @@ type SingleVolumeResponse struct {
 // GetInstancesAvailabilityParams defines parameters for GetInstancesAvailability.
 type GetInstancesAvailabilityParams struct {
 	Placement *string `form:"placement,omitempty" json:"placement,omitempty"`
+}
+
+// ListCatalogParams defines parameters for ListCatalog.
+type ListCatalogParams struct {
+	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
+	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
 // ListFloatingIPsParams defines parameters for ListFloatingIPs.
