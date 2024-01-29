@@ -142,10 +142,10 @@ type ClientInterface interface {
 	// ListInstanceSnapshots request
 	ListInstanceSnapshots(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// CreateSnapshotWithBody request with any body
-	CreateSnapshotWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CreateInstanceSnapshotWithBody request with any body
+	CreateInstanceSnapshotWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	CreateSnapshot(ctx context.Context, instanceId string, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	CreateInstanceSnapshot(ctx context.Context, instanceId string, body CreateInstanceSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListSecurityGroups request
 	ListSecurityGroups(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -168,6 +168,11 @@ type ClientInterface interface {
 
 	// ListSnapshots request
 	ListSnapshots(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateSnapshotWithBody request with any body
+	CreateSnapshotWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateSnapshot(ctx context.Context, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteSnapshot request
 	DeleteSnapshot(ctx context.Context, snapshotId string, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -447,8 +452,8 @@ func (c *Client) ListInstanceSnapshots(ctx context.Context, instanceId string, p
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateSnapshotWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateSnapshotRequestWithBody(c.Server, instanceId, contentType, body)
+func (c *Client) CreateInstanceSnapshotWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateInstanceSnapshotRequestWithBody(c.Server, instanceId, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -459,8 +464,8 @@ func (c *Client) CreateSnapshotWithBody(ctx context.Context, instanceId string, 
 	return c.Client.Do(req)
 }
 
-func (c *Client) CreateSnapshot(ctx context.Context, instanceId string, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewCreateSnapshotRequest(c.Server, instanceId, body)
+func (c *Client) CreateInstanceSnapshot(ctx context.Context, instanceId string, body CreateInstanceSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateInstanceSnapshotRequest(c.Server, instanceId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -557,6 +562,30 @@ func (c *Client) UpdateSecurityGroup(ctx context.Context, securityGroupId string
 
 func (c *Client) ListSnapshots(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListSnapshotsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSnapshotWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSnapshotRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateSnapshot(ctx context.Context, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateSnapshotRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -1531,19 +1560,19 @@ func NewListInstanceSnapshotsRequest(server string, instanceId string, params *L
 	return req, nil
 }
 
-// NewCreateSnapshotRequest calls the generic CreateSnapshot builder with application/json body
-func NewCreateSnapshotRequest(server string, instanceId string, body CreateSnapshotJSONRequestBody) (*http.Request, error) {
+// NewCreateInstanceSnapshotRequest calls the generic CreateInstanceSnapshot builder with application/json body
+func NewCreateInstanceSnapshotRequest(server string, instanceId string, body CreateInstanceSnapshotJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewCreateSnapshotRequestWithBody(server, instanceId, "application/json", bodyReader)
+	return NewCreateInstanceSnapshotRequestWithBody(server, instanceId, "application/json", bodyReader)
 }
 
-// NewCreateSnapshotRequestWithBody generates requests for CreateSnapshot with any type of body
-func NewCreateSnapshotRequestWithBody(server string, instanceId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewCreateInstanceSnapshotRequestWithBody generates requests for CreateInstanceSnapshot with any type of body
+func NewCreateInstanceSnapshotRequestWithBody(server string, instanceId string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1859,6 +1888,46 @@ func NewListSnapshotsRequest(server string, params *ListSnapshotsParams) (*http.
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateSnapshotRequest calls the generic CreateSnapshot builder with application/json body
+func NewCreateSnapshotRequest(server string, body CreateSnapshotJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateSnapshotRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateSnapshotRequestWithBody generates requests for CreateSnapshot with any type of body
+func NewCreateSnapshotRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/snapshots")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2514,10 +2583,10 @@ type ClientWithResponsesInterface interface {
 	// ListInstanceSnapshotsWithResponse request
 	ListInstanceSnapshotsWithResponse(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*ListInstanceSnapshotsResponse, error)
 
-	// CreateSnapshotWithBodyWithResponse request with any body
-	CreateSnapshotWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error)
+	// CreateInstanceSnapshotWithBodyWithResponse request with any body
+	CreateInstanceSnapshotWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInstanceSnapshotResponse, error)
 
-	CreateSnapshotWithResponse(ctx context.Context, instanceId string, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error)
+	CreateInstanceSnapshotWithResponse(ctx context.Context, instanceId string, body CreateInstanceSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateInstanceSnapshotResponse, error)
 
 	// ListSecurityGroupsWithResponse request
 	ListSecurityGroupsWithResponse(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*ListSecurityGroupsResponse, error)
@@ -2540,6 +2609,11 @@ type ClientWithResponsesInterface interface {
 
 	// ListSnapshotsWithResponse request
 	ListSnapshotsWithResponse(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*ListSnapshotsResponse, error)
+
+	// CreateSnapshotWithBodyWithResponse request with any body
+	CreateSnapshotWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error)
+
+	CreateSnapshotWithResponse(ctx context.Context, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error)
 
 	// DeleteSnapshotWithResponse request
 	DeleteSnapshotWithResponse(ctx context.Context, snapshotId string, reqEditors ...RequestEditorFn) (*DeleteSnapshotResponse, error)
@@ -2933,7 +3007,7 @@ func (r ListInstanceSnapshotsResponse) StatusCode() int {
 	return 0
 }
 
-type CreateSnapshotResponse struct {
+type CreateInstanceSnapshotResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON201      *SingleSnapshotResponse
@@ -2941,7 +3015,7 @@ type CreateSnapshotResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r CreateSnapshotResponse) Status() string {
+func (r CreateInstanceSnapshotResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -2949,7 +3023,7 @@ func (r CreateSnapshotResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r CreateSnapshotResponse) StatusCode() int {
+func (r CreateInstanceSnapshotResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3087,6 +3161,29 @@ func (r ListSnapshotsResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ListSnapshotsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateSnapshotResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SingleSnapshotResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateSnapshotResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateSnapshotResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3556,21 +3653,21 @@ func (c *ClientWithResponses) ListInstanceSnapshotsWithResponse(ctx context.Cont
 	return ParseListInstanceSnapshotsResponse(rsp)
 }
 
-// CreateSnapshotWithBodyWithResponse request with arbitrary body returning *CreateSnapshotResponse
-func (c *ClientWithResponses) CreateSnapshotWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error) {
-	rsp, err := c.CreateSnapshotWithBody(ctx, instanceId, contentType, body, reqEditors...)
+// CreateInstanceSnapshotWithBodyWithResponse request with arbitrary body returning *CreateInstanceSnapshotResponse
+func (c *ClientWithResponses) CreateInstanceSnapshotWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInstanceSnapshotResponse, error) {
+	rsp, err := c.CreateInstanceSnapshotWithBody(ctx, instanceId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateSnapshotResponse(rsp)
+	return ParseCreateInstanceSnapshotResponse(rsp)
 }
 
-func (c *ClientWithResponses) CreateSnapshotWithResponse(ctx context.Context, instanceId string, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error) {
-	rsp, err := c.CreateSnapshot(ctx, instanceId, body, reqEditors...)
+func (c *ClientWithResponses) CreateInstanceSnapshotWithResponse(ctx context.Context, instanceId string, body CreateInstanceSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateInstanceSnapshotResponse, error) {
+	rsp, err := c.CreateInstanceSnapshot(ctx, instanceId, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseCreateSnapshotResponse(rsp)
+	return ParseCreateInstanceSnapshotResponse(rsp)
 }
 
 // ListSecurityGroupsWithResponse request returning *ListSecurityGroupsResponse
@@ -3641,6 +3738,23 @@ func (c *ClientWithResponses) ListSnapshotsWithResponse(ctx context.Context, par
 		return nil, err
 	}
 	return ParseListSnapshotsResponse(rsp)
+}
+
+// CreateSnapshotWithBodyWithResponse request with arbitrary body returning *CreateSnapshotResponse
+func (c *ClientWithResponses) CreateSnapshotWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error) {
+	rsp, err := c.CreateSnapshotWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSnapshotResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateSnapshotWithResponse(ctx context.Context, body CreateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error) {
+	rsp, err := c.CreateSnapshot(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateSnapshotResponse(rsp)
 }
 
 // DeleteSnapshotWithResponse request returning *DeleteSnapshotResponse
@@ -4274,15 +4388,15 @@ func ParseListInstanceSnapshotsResponse(rsp *http.Response) (*ListInstanceSnapsh
 	return response, nil
 }
 
-// ParseCreateSnapshotResponse parses an HTTP response from a CreateSnapshotWithResponse call
-func ParseCreateSnapshotResponse(rsp *http.Response) (*CreateSnapshotResponse, error) {
+// ParseCreateInstanceSnapshotResponse parses an HTTP response from a CreateInstanceSnapshotWithResponse call
+func ParseCreateInstanceSnapshotResponse(rsp *http.Response) (*CreateInstanceSnapshotResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &CreateSnapshotResponse{
+	response := &CreateInstanceSnapshotResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -4485,6 +4599,39 @@ func ParseListSnapshotsResponse(rsp *http.Response) (*ListSnapshotsResponse, err
 			return nil, err
 		}
 		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateSnapshotResponse parses an HTTP response from a CreateSnapshotWithResponse call
+func ParseCreateSnapshotResponse(rsp *http.Response) (*CreateSnapshotResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateSnapshotResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SingleSnapshotResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
 		var dest ErrorResponse
