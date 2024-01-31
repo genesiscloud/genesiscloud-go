@@ -22,15 +22,32 @@ var AllFloatingIPVersions = []FloatingIPVersion{
 	FloatingIPVersionIpv6,
 }
 
+// Defines values for FloatingIpStatus.
+const (
+	FloatingIpStatusCreated  FloatingIpStatus = "created"
+	FloatingIpStatusCreating FloatingIpStatus = "creating"
+	FloatingIpStatusDeleting FloatingIpStatus = "deleting"
+	FloatingIpStatusError    FloatingIpStatus = "error"
+)
+
+var AllFloatingIpStatuss = []FloatingIpStatus{
+	FloatingIpStatusCreated,
+	FloatingIpStatusCreating,
+	FloatingIpStatusDeleting,
+	FloatingIpStatusError,
+}
+
 // Defines values for ImageType.
 const (
 	ImageTypeBaseOs        ImageType = "base-os"
+	ImageTypeCloudImage    ImageType = "cloud-image"
 	ImageTypePreconfigured ImageType = "preconfigured"
 	ImageTypeSnapshot      ImageType = "snapshot"
 )
 
 var AllImageTypes = []ImageType{
 	ImageTypeBaseOs,
+	ImageTypeCloudImage,
 	ImageTypePreconfigured,
 	ImageTypeSnapshot,
 }
@@ -46,6 +63,23 @@ var AllInstanceActions = []InstanceAction{
 	InstanceActionReset,
 	InstanceActionStart,
 	InstanceActionStop,
+}
+
+// Defines values for InstanceBillingType.
+const (
+	InstanceBillingTypeOnDemand       InstanceBillingType = "on-demand"
+	InstanceBillingTypePrepaid12Month InstanceBillingType = "prepaid-12-month"
+	InstanceBillingTypePrepaid3Month  InstanceBillingType = "prepaid-3-month"
+	InstanceBillingTypePrepaid6Month  InstanceBillingType = "prepaid-6-month"
+	InstanceBillingTypePrepaidMonthly InstanceBillingType = "prepaid-monthly"
+)
+
+var AllInstanceBillingTypes = []InstanceBillingType{
+	InstanceBillingTypeOnDemand,
+	InstanceBillingTypePrepaid12Month,
+	InstanceBillingTypePrepaid3Month,
+	InstanceBillingTypePrepaid6Month,
+	InstanceBillingTypePrepaidMonthly,
 }
 
 // Defines values for InstancePublicIPType.
@@ -96,6 +130,17 @@ var AllInstanceStatuss = []InstanceStatus{
 	InstanceStatusStopping,
 	InstanceStatusUnknown,
 	InstanceStatusUpdating,
+}
+
+// Defines values for OSType.
+const (
+	OSTypeLinux   OSType = "linux"
+	OSTypeWindows OSType = "windows"
+)
+
+var AllOSTypes = []OSType{
+	OSTypeLinux,
+	OSTypeWindows,
 }
 
 // Defines values for Region.
@@ -216,6 +261,41 @@ var AllCreateFloatingIPJSONBodyVersions = []CreateFloatingIPJSONBodyVersion{
 	CreateFloatingIPJSONBodyVersionIpv6,
 }
 
+// Catalog defines model for Catalog.
+type Catalog struct {
+	BaseImageIds []string  `json:"base_image_ids"`
+	CreatedAt    Timestamp `json:"created_at"`
+
+	// Description The human-readable description for the catalog.
+	Description string        `json:"description"`
+	Fields      CatalogFields `json:"fields"`
+
+	// Id A unique identifier for each catalog. This is automatically generated.
+	Id     string `json:"id"`
+	Images []struct {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"images"`
+
+	// LogoUrl The url of the catalog
+	LogoUrl string `json:"logo_url"`
+
+	// Name The human-readable name for the catalog.
+	Name string `json:"name"`
+
+	// RequiresDriver The image catalog requires driver
+	RequiresDriver bool      `json:"requires_driver"`
+	UpdatedAt      Timestamp `json:"updated_at"`
+}
+
+// CatalogFields defines model for Catalog.Fields.
+type CatalogFields = []struct {
+	Env   string `json:"env"`
+	Key   string `json:"key"`
+	Label string `json:"label"`
+	Type  string `json:"type"`
+}
+
 // Error defines model for Error.
 type Error struct {
 	// Code The Genesis Cloud error code.
@@ -234,10 +314,17 @@ type FloatingIP struct {
 	Description string `json:"description"`
 
 	// Id A unique identifier for each floating IP. This is automatically generated.
-	Id string `json:"id"`
+	Id       string `json:"id"`
+	Instance *struct {
+		// Id A unique identifier for the attached instance.
+		Id string `json:"id"`
+
+		// Name The name of the attached instance.
+		Name string `json:"name"`
+	} `json:"instance"`
 
 	// IpAddress The IP address of the floating IP.
-	IpAddress *string `json:"ip_address,omitempty"`
+	IpAddress *string `json:"ip_address"`
 
 	// IsPublic A boolean value indicating whether the floating IP is public or private.
 	IsPublic bool `json:"is_public"`
@@ -246,19 +333,26 @@ type FloatingIP struct {
 	Name string `json:"name"`
 
 	// Region The region identifier.
-	Region    Region    `json:"region"`
-	UpdatedAt Timestamp `json:"updated_at"`
+	Region Region `json:"region"`
+
+	// Status The floating ip status.
+	Status    FloatingIpStatus `json:"status"`
+	UpdatedAt Timestamp        `json:"updated_at"`
 
 	// Version The IP version of the floating IP.
-	Version *FloatingIPVersion `json:"version,omitempty"`
+	Version FloatingIPVersion `json:"version"`
 }
 
 // FloatingIPVersion The IP version of the floating IP.
 type FloatingIPVersion string
 
+// FloatingIpStatus The floating ip status.
+type FloatingIpStatus string
+
 // Image defines model for Image.
 type Image struct {
 	CreatedAt Timestamp `json:"created_at"`
+	Family    *string   `json:"family"`
 
 	// Id A unique number that can be used to identify and reference a specific image.
 	Id ImageId `json:"id"`
@@ -266,11 +360,19 @@ type Image struct {
 	// Name The display name that has been given to an image. This is what is shown in the control panel and is generally a descriptive title for the image in question.
 	Name string `json:"name"`
 
+	// OsType The OS type.
+	OsType OSType `json:"os_type"`
+
 	// Regions The list of regions in which this image can be used in.
 	Regions []Region `json:"regions"`
+	Slug    *string  `json:"slug"`
 
 	// Type Describes the kind of image.
-	Type ImageType `json:"type"`
+	Type      ImageType `json:"type"`
+	UpdatedAt Timestamp `json:"updated_at"`
+
+	// Versions The list of versions if this is a cloud-image otherwise empty.
+	Versions *[]string `json:"versions"`
 }
 
 // ImageType Describes the kind of image.
@@ -300,6 +402,9 @@ type Instance struct {
 
 	// Name The human-readable name set for the instance.
 	Name InstanceName `json:"name"`
+
+	// OsType The OS type.
+	OsType OSType `json:"os_type"`
 
 	// PlacementOption The placement option identifier in which instances are physically located relative to each other within a zone.
 	PlacementOption string `json:"placement_option"`
@@ -354,6 +459,15 @@ type Instance struct {
 // InstanceAction defines model for Instance.Action.
 type InstanceAction string
 
+// InstanceBillingType The billing type of the instance.
+type InstanceBillingType string
+
+// InstanceDestroyOnShutdown Option that you can set at instance creation that will allow the instance to destroy on shutdown command
+type InstanceDestroyOnShutdown = bool
+
+// InstanceFloatingIp The id of the floating IP to attach to the instance.
+type InstanceFloatingIp = string
+
 // InstanceHostname The hostname of your instance.
 type InstanceHostname = string
 
@@ -367,6 +481,13 @@ type InstanceName = string
 
 // InstancePublicIPType When set to `static`, the instance's public IP will not change between start and stop actions.
 type InstancePublicIPType string
+
+// InstancePublicIpv6 A boolean value indicating whether the instance should have an ipv6 address or not.
+type InstancePublicIpv6 = bool
+
+// InstanceReuseLongTermSubscription The long term subscription id to be used for this instance.
+// If not provided, the billing_type will default to on-demand.
+type InstanceReuseLongTermSubscription = string
 
 // InstanceSSHKeyId The ssh key ID.
 type InstanceSSHKeyId = string
@@ -409,6 +530,9 @@ type InstancesAvailability struct {
 		Type   string `json:"type"`
 	} `json:"availability"`
 }
+
+// OSType The OS type.
+type OSType string
 
 // Region The region identifier.
 type Region string
@@ -494,6 +618,9 @@ type Snapshot struct {
 	// Name The human-readable name for the snapshot.
 	Name string `json:"name"`
 
+	// OsType The OS type.
+	OsType OSType `json:"os_type"`
+
 	// Region The region identifier.
 	Region Region `json:"region"`
 
@@ -573,6 +700,14 @@ type InstanceListActionsResponse struct {
 
 // InstancesAvailabilityResponse defines model for InstancesAvailabilityResponse.
 type InstancesAvailabilityResponse = InstancesAvailability
+
+// PaginatedCatalogResponse defines model for PaginatedCatalogResponse.
+type PaginatedCatalogResponse struct {
+	Catalog    []Catalog `json:"catalog"`
+	Page       int       `json:"page"`
+	PerPage    int       `json:"per_page"`
+	TotalCount int       `json:"total_count"`
+}
 
 // PaginatedFloatingIPsResponse defines model for PaginatedFloatingIPsResponse.
 type PaginatedFloatingIPsResponse struct {
@@ -663,6 +798,12 @@ type GetInstancesAvailabilityParams struct {
 	Placement *string `form:"placement,omitempty" json:"placement,omitempty"`
 }
 
+// ListCatalogParams defines parameters for ListCatalog.
+type ListCatalogParams struct {
+	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
+	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
 // ListFloatingIPsParams defines parameters for ListFloatingIPs.
 type ListFloatingIPsParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
@@ -671,13 +812,10 @@ type ListFloatingIPsParams struct {
 
 // CreateFloatingIPJSONBody defines parameters for CreateFloatingIP.
 type CreateFloatingIPJSONBody struct {
-	// Description The human-readable description set for the volume.
+	// Description The human-readable description set for the floating IP.
 	Description *string `json:"description,omitempty"`
 
-	// IsPublic Whether the floating IP is public or private.
-	IsPublic bool `json:"is_public"`
-
-	// Name The human-readable name set for the volume.
+	// Name The human-readable name set for the floating IP.
 	Name string `json:"name"`
 
 	// Region The region identifier.
@@ -705,6 +843,18 @@ type ListInstancesParams struct {
 
 // CreateInstanceJSONBody defines parameters for CreateInstance.
 type CreateInstanceJSONBody struct {
+	// BillingType The billing type of the instance.
+	BillingType *InstanceBillingType `json:"billing_type,omitempty"`
+
+	// DestroyOnShutdown Option that you can set at instance creation that will allow the instance to destroy on shutdown command
+	DestroyOnShutdown *InstanceDestroyOnShutdown `json:"destroy_on_shutdown,omitempty"`
+
+	// DiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
+	DiskSize *int `json:"disk_size,omitempty"`
+
+	// FloatingIp The id of the floating IP to attach to the instance.
+	FloatingIp *InstanceFloatingIp `json:"floating_ip,omitempty"`
+
 	// Hostname The hostname of your instance.
 	Hostname InstanceHostname `json:"hostname"`
 
@@ -740,8 +890,15 @@ type CreateInstanceJSONBody struct {
 	// PublicIpType When set to `static`, the instance's public IP will not change between start and stop actions.
 	PublicIpType *InstancePublicIPType `json:"public_ip_type,omitempty"`
 
+	// PublicIpv6 A boolean value indicating whether the instance should have an ipv6 address or not.
+	PublicIpv6 *InstancePublicIpv6 `json:"public_ipv6,omitempty"`
+
 	// Region The region identifier.
 	Region Region `json:"region"`
+
+	// ReuseLongTermSubscription The long term subscription id to be used for this instance.
+	// If not provided, the billing_type will default to on-demand.
+	ReuseLongTermSubscription *InstanceReuseLongTermSubscription `json:"reuse_long_term_subscription,omitempty"`
 
 	// SecurityGroups An array of security group ids.
 	// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
@@ -789,9 +946,9 @@ type ListInstanceSnapshotsParams struct {
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
-// CreateSnapshotJSONBody defines parameters for CreateSnapshot.
-type CreateSnapshotJSONBody struct {
-	// Name Name of the snapshot
+// CreateInstanceSnapshotJSONBody defines parameters for CreateInstanceSnapshot.
+type CreateInstanceSnapshotJSONBody struct {
+	// Name Name of the snapshot.
 	Name string `json:"name"`
 }
 
@@ -834,6 +991,24 @@ type ListSnapshotsParams struct {
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
+// CreateSnapshotJSONBody defines parameters for CreateSnapshot.
+type CreateSnapshotJSONBody struct {
+	// Name The human-readable name set for the snapshot.
+	Name string `json:"name"`
+
+	// OsType The OS type.
+	OsType *OSType `json:"os_type,omitempty"`
+
+	// Region The region identifier.
+	Region Region `json:"region"`
+
+	// Size The storage size of this snapshot given in GiB (Min: 1GiB).
+	Size int `json:"size"`
+
+	// Url The url pointing to a raw or raw with zstd compressed image.
+	Url string `json:"url"`
+}
+
 // UpdateSnapshotJSONBody defines parameters for UpdateSnapshot.
 type UpdateSnapshotJSONBody struct {
 	// Name The new human-readable name for your snapshot.
@@ -851,7 +1026,7 @@ type CreateSSHKeyJSONBody struct {
 	// Name The human-readable name for your ssh key.
 	Name string `json:"name"`
 
-	// Value SSH public key
+	// Value SSH public key.
 	Value string `json:"value"`
 }
 
@@ -906,14 +1081,17 @@ type UpdateInstanceJSONRequestBody UpdateInstanceJSONBody
 // PerformInstanceActionJSONRequestBody defines body for PerformInstanceAction for application/json ContentType.
 type PerformInstanceActionJSONRequestBody PerformInstanceActionJSONBody
 
-// CreateSnapshotJSONRequestBody defines body for CreateSnapshot for application/json ContentType.
-type CreateSnapshotJSONRequestBody CreateSnapshotJSONBody
+// CreateInstanceSnapshotJSONRequestBody defines body for CreateInstanceSnapshot for application/json ContentType.
+type CreateInstanceSnapshotJSONRequestBody CreateInstanceSnapshotJSONBody
 
 // CreateSecurityGroupJSONRequestBody defines body for CreateSecurityGroup for application/json ContentType.
 type CreateSecurityGroupJSONRequestBody CreateSecurityGroupJSONBody
 
 // UpdateSecurityGroupJSONRequestBody defines body for UpdateSecurityGroup for application/json ContentType.
 type UpdateSecurityGroupJSONRequestBody UpdateSecurityGroupJSONBody
+
+// CreateSnapshotJSONRequestBody defines body for CreateSnapshot for application/json ContentType.
+type CreateSnapshotJSONRequestBody CreateSnapshotJSONBody
 
 // UpdateSnapshotJSONRequestBody defines body for UpdateSnapshot for application/json ContentType.
 type UpdateSnapshotJSONRequestBody UpdateSnapshotJSONBody
