@@ -11,6 +11,28 @@ const (
 	ApiKeyAuthScopes = "ApiKeyAuth.Scopes"
 )
 
+// Defines values for FilesystemStatus.
+const (
+	FilesystemStatusCreated  FilesystemStatus = "created"
+	FilesystemStatusCreating FilesystemStatus = "creating"
+	FilesystemStatusDeleting FilesystemStatus = "deleting"
+)
+
+var AllFilesystemStatuss = []FilesystemStatus{
+	FilesystemStatusCreated,
+	FilesystemStatusCreating,
+	FilesystemStatusDeleting,
+}
+
+// Defines values for FilesystemType.
+const (
+	FilesystemTypeVast FilesystemType = "vast"
+)
+
+var AllFilesystemTypes = []FilesystemType{
+	FilesystemTypeVast,
+}
+
 // Defines values for FloatingIPVersion.
 const (
 	FloatingIPVersionIpv4 FloatingIPVersion = "ipv4"
@@ -253,12 +275,10 @@ var AllVolumeTypes = []VolumeType{
 // Defines values for CreateFloatingIPJSONBodyVersion.
 const (
 	CreateFloatingIPJSONBodyVersionIpv4 CreateFloatingIPJSONBodyVersion = "ipv4"
-	CreateFloatingIPJSONBodyVersionIpv6 CreateFloatingIPJSONBodyVersion = "ipv6"
 )
 
 var AllCreateFloatingIPJSONBodyVersions = []CreateFloatingIPJSONBodyVersion{
 	CreateFloatingIPJSONBodyVersionIpv4,
-	CreateFloatingIPJSONBodyVersionIpv6,
 }
 
 // Catalog defines model for Catalog.
@@ -305,6 +325,46 @@ type Error struct {
 	// Message An explanation of what went wrong.
 	Message string `json:"message"`
 }
+
+// Filesystem defines model for Filesystem.
+type Filesystem struct {
+	CreatedAt Timestamp `json:"created_at"`
+
+	// Description The human-readable description for the filesystem.
+	Description string `json:"description"`
+
+	// Id A unique identifier for each filesystem. This is automatically generated.
+	Id FilesystemId `json:"id"`
+
+	// MountBasePath The mount base path of the filesystem.
+	MountBasePath *string `json:"mount_base_path"`
+
+	// MountEndpointRange The mount endpoint range of the filesystem.
+	MountEndpointRange *[]string `json:"mount_endpoint_range"`
+
+	// Name The human-readable name for the filesystem.
+	Name string `json:"name"`
+
+	// Region The region identifier.
+	Region Region `json:"region"`
+
+	// Size The storage size of this filesystem given in GiB.
+	Size   int              `json:"size"`
+	Status FilesystemStatus `json:"status"`
+
+	// Type The filesystem type.
+	Type      FilesystemType `json:"type"`
+	UpdatedAt Timestamp      `json:"updated_at"`
+}
+
+// FilesystemStatus defines model for Filesystem.Status.
+type FilesystemStatus string
+
+// FilesystemId A unique identifier for each filesystem. This is automatically generated.
+type FilesystemId = string
+
+// FilesystemType The filesystem type.
+type FilesystemType string
 
 // FloatingIP defines model for FloatingIP.
 type FloatingIP struct {
@@ -709,6 +769,14 @@ type PaginatedCatalogResponse struct {
 	TotalCount int       `json:"total_count"`
 }
 
+// PaginatedFilesystemsResponse defines model for PaginatedFilesystemsResponse.
+type PaginatedFilesystemsResponse struct {
+	Filesystems []Filesystem `json:"filesystems"`
+	Page        int          `json:"page"`
+	PerPage     int          `json:"per_page"`
+	TotalCount  int          `json:"total_count"`
+}
+
 // PaginatedFloatingIPsResponse defines model for PaginatedFloatingIPsResponse.
 type PaginatedFloatingIPsResponse struct {
 	FloatingIps []FloatingIP `json:"floating_ips"`
@@ -765,6 +833,11 @@ type PaginatedVolumesResponse struct {
 	Volumes    []Volume `json:"volumes"`
 }
 
+// SingleFilesystemResponse defines model for SingleFilesystemResponse.
+type SingleFilesystemResponse struct {
+	Filesystem Filesystem `json:"filesystem"`
+}
+
 // SingleFloatingIPResponse defines model for SingleFloatingIPResponse.
 type SingleFloatingIPResponse struct {
 	FloatingIp *FloatingIP `json:"floating_ip,omitempty"`
@@ -804,6 +877,42 @@ type ListCatalogParams struct {
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
 
+// ListFilesystemsParams defines parameters for ListFilesystems.
+type ListFilesystemsParams struct {
+	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
+	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
+}
+
+// CreateFilesystemJSONBody defines parameters for CreateFilesystem.
+type CreateFilesystemJSONBody struct {
+	// Description The human-readable description set for the filesystem.
+	Description *string `json:"description,omitempty"`
+
+	// Name The human-readable name set for the filesystem.
+	Name string `json:"name"`
+
+	// Region The region identifier.
+	Region Region `json:"region"`
+
+	// Size The storage size of this filesystem given in GiB (Min: 1GiB).
+	Size int `json:"size"`
+
+	// Type The filesystem type.
+	Type *FilesystemType `json:"type,omitempty"`
+}
+
+// UpdateFilesystemJSONBody defines parameters for UpdateFilesystem.
+type UpdateFilesystemJSONBody struct {
+	// Description The human-readable description set for the filesystem.
+	Description *string `json:"description,omitempty"`
+
+	// Name The human-readable name set for the filesystem.
+	Name *string `json:"name,omitempty"`
+
+	// Size The storage size of this filesystem given in GiB.
+	Size *int `json:"size,omitempty"`
+}
+
 // ListFloatingIPsParams defines parameters for ListFloatingIPs.
 type ListFloatingIPsParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
@@ -822,11 +931,20 @@ type CreateFloatingIPJSONBody struct {
 	Region Region `json:"region"`
 
 	// Version The IP version of the floating IP.
-	Version CreateFloatingIPJSONBodyVersion `json:"version"`
+	Version *CreateFloatingIPJSONBodyVersion `json:"version,omitempty"`
 }
 
 // CreateFloatingIPJSONBodyVersion defines parameters for CreateFloatingIP.
 type CreateFloatingIPJSONBodyVersion string
+
+// UpdateFloatingIPJSONBody defines parameters for UpdateFloatingIP.
+type UpdateFloatingIPJSONBody struct {
+	// Description The human-readable description set for the floating IP.
+	Description *string `json:"description,omitempty"`
+
+	// Name The human-readable name set for the floating IP.
+	Name *string `json:"name,omitempty"`
+}
 
 // ListImagesParams defines parameters for ListImages.
 type ListImagesParams struct {
@@ -1069,8 +1187,17 @@ type UpdateVolumeJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
+// CreateFilesystemJSONRequestBody defines body for CreateFilesystem for application/json ContentType.
+type CreateFilesystemJSONRequestBody CreateFilesystemJSONBody
+
+// UpdateFilesystemJSONRequestBody defines body for UpdateFilesystem for application/json ContentType.
+type UpdateFilesystemJSONRequestBody UpdateFilesystemJSONBody
+
 // CreateFloatingIPJSONRequestBody defines body for CreateFloatingIP for application/json ContentType.
 type CreateFloatingIPJSONRequestBody CreateFloatingIPJSONBody
+
+// UpdateFloatingIPJSONRequestBody defines body for UpdateFloatingIP for application/json ContentType.
+type UpdateFloatingIPJSONRequestBody UpdateFloatingIPJSONBody
 
 // CreateInstanceJSONRequestBody defines body for CreateInstance for application/json ContentType.
 type CreateInstanceJSONRequestBody CreateInstanceJSONBody
