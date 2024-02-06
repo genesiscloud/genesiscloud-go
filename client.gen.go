@@ -95,6 +95,25 @@ type ClientInterface interface {
 	// ListCatalog request
 	ListCatalog(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListFilesystems request
+	ListFilesystems(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateFilesystemWithBody request with any body
+	CreateFilesystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateFilesystem(ctx context.Context, body CreateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteFilesystem request
+	DeleteFilesystem(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetFilesystem request
+	GetFilesystem(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateFilesystemWithBody request with any body
+	UpdateFilesystemWithBody(ctx context.Context, filesystemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateFilesystem(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListFloatingIPs request
 	ListFloatingIPs(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -108,6 +127,11 @@ type ClientInterface interface {
 
 	// GetFloatingIP request
 	GetFloatingIP(ctx context.Context, floatingIpId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateFloatingIPWithBody request with any body
+	UpdateFloatingIPWithBody(ctx context.Context, floatingIpId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateFloatingIP(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListImages request
 	ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -248,6 +272,90 @@ func (c *Client) ListCatalog(ctx context.Context, params *ListCatalogParams, req
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListFilesystems(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFilesystemsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateFilesystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFilesystemRequestWithBody(c.Server, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateFilesystem(ctx context.Context, body CreateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFilesystemRequest(c.Server, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteFilesystem(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteFilesystemRequest(c.Server, filesystemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetFilesystem(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFilesystemRequest(c.Server, filesystemId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateFilesystemWithBody(ctx context.Context, filesystemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFilesystemRequestWithBody(c.Server, filesystemId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateFilesystem(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFilesystemRequest(c.Server, filesystemId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListFloatingIPs(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListFloatingIPsRequest(c.Server, params)
 	if err != nil {
@@ -298,6 +406,30 @@ func (c *Client) DeleteFloatingIP(ctx context.Context, floatingIpId string, reqE
 
 func (c *Client) GetFloatingIP(ctx context.Context, floatingIpId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetFloatingIPRequest(c.Server, floatingIpId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateFloatingIPWithBody(ctx context.Context, floatingIpId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFloatingIPRequestWithBody(c.Server, floatingIpId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateFloatingIP(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateFloatingIPRequest(c.Server, floatingIpId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -933,6 +1065,226 @@ func NewListCatalogRequest(server string, params *ListCatalogParams) (*http.Requ
 	return req, nil
 }
 
+// NewListFilesystemsRequest generates requests for ListFilesystems
+func NewListFilesystemsRequest(server string, params *ListFilesystemsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/filesystems")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Page != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page", runtime.ParamLocationQuery, *params.Page); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.PerPage != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "per_page", runtime.ParamLocationQuery, *params.PerPage); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateFilesystemRequest calls the generic CreateFilesystem builder with application/json body
+func NewCreateFilesystemRequest(server string, body CreateFilesystemJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateFilesystemRequestWithBody(server, "application/json", bodyReader)
+}
+
+// NewCreateFilesystemRequestWithBody generates requests for CreateFilesystem with any type of body
+func NewCreateFilesystemRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/filesystems")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteFilesystemRequest generates requests for DeleteFilesystem
+func NewDeleteFilesystemRequest(server string, filesystemId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "filesystem_id", runtime.ParamLocationPath, filesystemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/filesystems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetFilesystemRequest generates requests for GetFilesystem
+func NewGetFilesystemRequest(server string, filesystemId string) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "filesystem_id", runtime.ParamLocationPath, filesystemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/filesystems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateFilesystemRequest calls the generic UpdateFilesystem builder with application/json body
+func NewUpdateFilesystemRequest(server string, filesystemId string, body UpdateFilesystemJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateFilesystemRequestWithBody(server, filesystemId, "application/json", bodyReader)
+}
+
+// NewUpdateFilesystemRequestWithBody generates requests for UpdateFilesystem with any type of body
+func NewUpdateFilesystemRequestWithBody(server string, filesystemId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "filesystem_id", runtime.ParamLocationPath, filesystemId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/filesystems/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 // NewListFloatingIPsRequest generates requests for ListFloatingIPs
 func NewListFloatingIPsRequest(server string, params *ListFloatingIPsParams) (*http.Request, error) {
 	var err error
@@ -1102,6 +1454,53 @@ func NewGetFloatingIPRequest(server string, floatingIpId string) (*http.Request,
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewUpdateFloatingIPRequest calls the generic UpdateFloatingIP builder with application/json body
+func NewUpdateFloatingIPRequest(server string, floatingIpId string, body UpdateFloatingIPJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateFloatingIPRequestWithBody(server, floatingIpId, "application/json", bodyReader)
+}
+
+// NewUpdateFloatingIPRequestWithBody generates requests for UpdateFloatingIP with any type of body
+func NewUpdateFloatingIPRequestWithBody(server string, floatingIpId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "floating_ip_id", runtime.ParamLocationPath, floatingIpId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/floating-ips/%s", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PATCH", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -2536,6 +2935,25 @@ type ClientWithResponsesInterface interface {
 	// ListCatalogWithResponse request
 	ListCatalogWithResponse(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*ListCatalogResponse, error)
 
+	// ListFilesystemsWithResponse request
+	ListFilesystemsWithResponse(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*ListFilesystemsResponse, error)
+
+	// CreateFilesystemWithBodyWithResponse request with any body
+	CreateFilesystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFilesystemResponse, error)
+
+	CreateFilesystemWithResponse(ctx context.Context, body CreateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateFilesystemResponse, error)
+
+	// DeleteFilesystemWithResponse request
+	DeleteFilesystemWithResponse(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*DeleteFilesystemResponse, error)
+
+	// GetFilesystemWithResponse request
+	GetFilesystemWithResponse(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*GetFilesystemResponse, error)
+
+	// UpdateFilesystemWithBodyWithResponse request with any body
+	UpdateFilesystemWithBodyWithResponse(ctx context.Context, filesystemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFilesystemResponse, error)
+
+	UpdateFilesystemWithResponse(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFilesystemResponse, error)
+
 	// ListFloatingIPsWithResponse request
 	ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error)
 
@@ -2549,6 +2967,11 @@ type ClientWithResponsesInterface interface {
 
 	// GetFloatingIPWithResponse request
 	GetFloatingIPWithResponse(ctx context.Context, floatingIpId string, reqEditors ...RequestEditorFn) (*GetFloatingIPResponse, error)
+
+	// UpdateFloatingIPWithBodyWithResponse request with any body
+	UpdateFloatingIPWithBodyWithResponse(ctx context.Context, floatingIpId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFloatingIPResponse, error)
+
+	UpdateFloatingIPWithResponse(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFloatingIPResponse, error)
 
 	// ListImagesWithResponse request
 	ListImagesWithResponse(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*ListImagesResponse, error)
@@ -2711,6 +3134,120 @@ func (r ListCatalogResponse) StatusCode() int {
 	return 0
 }
 
+type ListFilesystemsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PaginatedFilesystemsResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListFilesystemsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListFilesystemsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateFilesystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *SingleFilesystemResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateFilesystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateFilesystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteFilesystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteFilesystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteFilesystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetFilesystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SingleFilesystemResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetFilesystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetFilesystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateFilesystemResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SingleFilesystemResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateFilesystemResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateFilesystemResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListFloatingIPsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2796,6 +3333,29 @@ func (r GetFloatingIPResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetFloatingIPResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateFloatingIPResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SingleFloatingIPResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateFloatingIPResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateFloatingIPResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3504,6 +4064,67 @@ func (c *ClientWithResponses) ListCatalogWithResponse(ctx context.Context, param
 	return ParseListCatalogResponse(rsp)
 }
 
+// ListFilesystemsWithResponse request returning *ListFilesystemsResponse
+func (c *ClientWithResponses) ListFilesystemsWithResponse(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*ListFilesystemsResponse, error) {
+	rsp, err := c.ListFilesystems(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListFilesystemsResponse(rsp)
+}
+
+// CreateFilesystemWithBodyWithResponse request with arbitrary body returning *CreateFilesystemResponse
+func (c *ClientWithResponses) CreateFilesystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFilesystemResponse, error) {
+	rsp, err := c.CreateFilesystemWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateFilesystemResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateFilesystemWithResponse(ctx context.Context, body CreateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateFilesystemResponse, error) {
+	rsp, err := c.CreateFilesystem(ctx, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateFilesystemResponse(rsp)
+}
+
+// DeleteFilesystemWithResponse request returning *DeleteFilesystemResponse
+func (c *ClientWithResponses) DeleteFilesystemWithResponse(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*DeleteFilesystemResponse, error) {
+	rsp, err := c.DeleteFilesystem(ctx, filesystemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteFilesystemResponse(rsp)
+}
+
+// GetFilesystemWithResponse request returning *GetFilesystemResponse
+func (c *ClientWithResponses) GetFilesystemWithResponse(ctx context.Context, filesystemId string, reqEditors ...RequestEditorFn) (*GetFilesystemResponse, error) {
+	rsp, err := c.GetFilesystem(ctx, filesystemId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetFilesystemResponse(rsp)
+}
+
+// UpdateFilesystemWithBodyWithResponse request with arbitrary body returning *UpdateFilesystemResponse
+func (c *ClientWithResponses) UpdateFilesystemWithBodyWithResponse(ctx context.Context, filesystemId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFilesystemResponse, error) {
+	rsp, err := c.UpdateFilesystemWithBody(ctx, filesystemId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateFilesystemResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateFilesystemWithResponse(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFilesystemResponse, error) {
+	rsp, err := c.UpdateFilesystem(ctx, filesystemId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateFilesystemResponse(rsp)
+}
+
 // ListFloatingIPsWithResponse request returning *ListFloatingIPsResponse
 func (c *ClientWithResponses) ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error) {
 	rsp, err := c.ListFloatingIPs(ctx, params, reqEditors...)
@@ -3546,6 +4167,23 @@ func (c *ClientWithResponses) GetFloatingIPWithResponse(ctx context.Context, flo
 		return nil, err
 	}
 	return ParseGetFloatingIPResponse(rsp)
+}
+
+// UpdateFloatingIPWithBodyWithResponse request with arbitrary body returning *UpdateFloatingIPResponse
+func (c *ClientWithResponses) UpdateFloatingIPWithBodyWithResponse(ctx context.Context, floatingIpId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFloatingIPResponse, error) {
+	rsp, err := c.UpdateFloatingIPWithBody(ctx, floatingIpId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateFloatingIPResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateFloatingIPWithResponse(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFloatingIPResponse, error) {
+	rsp, err := c.UpdateFloatingIP(ctx, floatingIpId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateFloatingIPResponse(rsp)
 }
 
 // ListImagesWithResponse request returning *ListImagesResponse
@@ -3980,6 +4618,164 @@ func ParseListCatalogResponse(rsp *http.Response) (*ListCatalogResponse, error) 
 	return response, nil
 }
 
+// ParseListFilesystemsResponse parses an HTTP response from a ListFilesystemsWithResponse call
+func ParseListFilesystemsResponse(rsp *http.Response) (*ListFilesystemsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListFilesystemsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PaginatedFilesystemsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateFilesystemResponse parses an HTTP response from a CreateFilesystemWithResponse call
+func ParseCreateFilesystemResponse(rsp *http.Response) (*CreateFilesystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateFilesystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SingleFilesystemResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteFilesystemResponse parses an HTTP response from a DeleteFilesystemWithResponse call
+func ParseDeleteFilesystemResponse(rsp *http.Response) (*DeleteFilesystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteFilesystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetFilesystemResponse parses an HTTP response from a GetFilesystemWithResponse call
+func ParseGetFilesystemResponse(rsp *http.Response) (*GetFilesystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetFilesystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SingleFilesystemResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateFilesystemResponse parses an HTTP response from a UpdateFilesystemWithResponse call
+func ParseUpdateFilesystemResponse(rsp *http.Response) (*UpdateFilesystemResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateFilesystemResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SingleFilesystemResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListFloatingIPsResponse parses an HTTP response from a ListFloatingIPsWithResponse call
 func ParseListFloatingIPsResponse(rsp *http.Response) (*ListFloatingIPsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4081,6 +4877,39 @@ func ParseGetFloatingIPResponse(rsp *http.Response) (*GetFloatingIPResponse, err
 	}
 
 	response := &GetFloatingIPResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SingleFloatingIPResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateFloatingIPResponse parses an HTTP response from a UpdateFloatingIPWithResponse call
+func ParseUpdateFloatingIPResponse(rsp *http.Response) (*UpdateFloatingIPResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateFloatingIPResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
