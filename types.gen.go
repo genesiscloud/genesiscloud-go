@@ -445,6 +445,15 @@ type ImageId = string
 type Instance struct {
 	CreatedAt Timestamp `json:"created_at"`
 
+	// FloatingIp The floating IP attached to the instance.
+	FloatingIp *struct {
+		// Id The ID of the floating IP.
+		Id string `json:"id"`
+
+		// Name The name of the floating IP.
+		Name string `json:"name"`
+	} `json:"floating_ip"`
+
 	// Hostname The hostname of your instance.
 	Hostname InstanceHostname `json:"hostname"`
 
