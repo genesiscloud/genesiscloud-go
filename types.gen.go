@@ -849,7 +849,7 @@ type SingleFilesystemResponse struct {
 
 // SingleFloatingIPResponse defines model for SingleFloatingIPResponse.
 type SingleFloatingIPResponse struct {
-	FloatingIp *FloatingIP `json:"floating_ip,omitempty"`
+	FloatingIp FloatingIP `json:"floating_ip"`
 }
 
 // SingleInstanceResponse defines model for SingleInstanceResponse.
