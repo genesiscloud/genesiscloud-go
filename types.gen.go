@@ -696,8 +696,8 @@ type Snapshot struct {
 	// ResourceId The id of the resource (e.g. instance) that was snapshotted.
 	ResourceId string `json:"resource_id"`
 
-	// Size The storage size of this snapshot given in bytes.
-	Size *string `json:"size,omitempty"`
+	// Size The storage size of this snapshot given in GiB.
+	Size int `json:"size"`
 
 	// Status The snapshot status.
 	Status    SnapshotStatus `json:"status"`
