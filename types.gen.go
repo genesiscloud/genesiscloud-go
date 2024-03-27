@@ -104,17 +104,6 @@ var AllInstanceBillingTypes = []InstanceBillingType{
 	InstanceBillingTypePrepaidMonthly,
 }
 
-// Defines values for InstancePublicIPType.
-const (
-	InstancePublicIPTypeDynamic InstancePublicIPType = "dynamic"
-	InstancePublicIPTypeStatic  InstancePublicIPType = "static"
-)
-
-var AllInstancePublicIPTypes = []InstancePublicIPType{
-	InstancePublicIPTypeDynamic,
-	InstancePublicIPTypeStatic,
-}
-
 // Defines values for InstanceStatus.
 const (
 	InstanceStatusActive         InstanceStatus = "active"
@@ -445,6 +434,9 @@ type ImageId = string
 type Instance struct {
 	CreatedAt Timestamp `json:"created_at"`
 
+	// DiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
+	DiskSize *InstanceDiskSize `json:"disk_size,omitempty"`
+
 	// FloatingIp The floating IP attached to the instance.
 	FloatingIp *struct {
 		// Id The ID of the floating IP.
@@ -483,9 +475,6 @@ type Instance struct {
 
 	// PublicIp The public IPv4 IP-Address (IPv4 address).
 	PublicIp *string `json:"public_ip"`
-
-	// PublicIpType When set to `static`, the instance's public IP will not change between start and stop actions.
-	PublicIpType InstancePublicIPType `json:"public_ip_type"`
 
 	// Region The region identifier.
 	Region Region `json:"region"`
@@ -534,6 +523,9 @@ type InstanceBillingType string
 // InstanceDestroyOnShutdown Option that you can set at instance creation that will allow the instance to destroy on shutdown command
 type InstanceDestroyOnShutdown = bool
 
+// InstanceDiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
+type InstanceDiskSize = int
+
 // InstanceFloatingIp The id of the floating IP to attach to the instance.
 type InstanceFloatingIp = string
 
@@ -547,9 +539,6 @@ type InstanceIsProtected = bool
 
 // InstanceName The human-readable name set for the instance.
 type InstanceName = string
-
-// InstancePublicIPType When set to `static`, the instance's public IP will not change between start and stop actions.
-type InstancePublicIPType string
 
 // InstancePublicIpv6 A boolean value indicating whether the instance should have an ipv6 address or not.
 type InstancePublicIpv6 = bool
@@ -977,7 +966,7 @@ type CreateInstanceJSONBody struct {
 	DestroyOnShutdown *InstanceDestroyOnShutdown `json:"destroy_on_shutdown,omitempty"`
 
 	// DiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
-	DiskSize *int `json:"disk_size,omitempty"`
+	DiskSize *InstanceDiskSize `json:"disk_size,omitempty"`
 
 	// FloatingIp The id of the floating IP to attach to the instance.
 	FloatingIp *InstanceFloatingIp `json:"floating_ip,omitempty"`
@@ -1014,9 +1003,6 @@ type CreateInstanceJSONBody struct {
 	// PlacementOption The placement option identifier in which instances are physically located relative to each other within a zone.
 	PlacementOption *string `json:"placement_option,omitempty"`
 
-	// PublicIpType When set to `static`, the instance's public IP will not change between start and stop actions.
-	PublicIpType *InstancePublicIPType `json:"public_ip_type,omitempty"`
-
 	// PublicIpv6 A boolean value indicating whether the instance should have an ipv6 address or not.
 	PublicIpv6 *InstancePublicIpv6 `json:"public_ipv6,omitempty"`
 
@@ -1045,6 +1031,9 @@ type CreateInstanceJSONBody struct {
 
 // UpdateInstanceJSONBody defines parameters for UpdateInstance.
 type UpdateInstanceJSONBody struct {
+	// DiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
+	DiskSize *InstanceDiskSize `json:"disk_size,omitempty"`
+
 	// IsProtected Specifies if the instance is termination protected.
 	// When set to `true`, it"s not possible to destroy the instance until it"s switched to `false`.
 	// Set to `true` automatically for long-term billed instances.
