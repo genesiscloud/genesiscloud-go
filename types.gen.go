@@ -479,6 +479,9 @@ type Instance struct {
 	// Region The region identifier.
 	Region Region `json:"region"`
 
+	// ReservationId The unique ID of the reservation the instance is associated with.
+	ReservationId *string `json:"reservation_id"`
+
 	// SecurityGroups The security groups of the instance.
 	SecurityGroups []struct {
 		// Id The security group ID.
@@ -1009,6 +1012,9 @@ type CreateInstanceJSONBody struct {
 	// Region The region identifier.
 	Region Region `json:"region"`
 
+	// ReservationId The unique ID of the reservation the instance is associated with.
+	ReservationId *string `json:"reservation_id,omitempty"`
+
 	// ReuseLongTermSubscription The long term subscription id to be used for this instance.
 	// If not provided, the billing_type will default to on-demand.
 	ReuseLongTermSubscription *InstanceReuseLongTermSubscription `json:"reuse_long_term_subscription,omitempty"`
@@ -1041,6 +1047,9 @@ type UpdateInstanceJSONBody struct {
 
 	// Name The human-readable name set for the instance.
 	Name *InstanceName `json:"name,omitempty"`
+
+	// ReservationId The unique ID of the reservation the instance is associated with.
+	ReservationId *string `json:"reservation_id,omitempty"`
 
 	// SecurityGroups An array of security group ids.
 	// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
