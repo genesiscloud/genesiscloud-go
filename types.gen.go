@@ -437,6 +437,9 @@ type Instance struct {
 	// DiskSize The storage size of the instance's boot volume given in GiB (Min: 80GiB).
 	DiskSize *InstanceDiskSize `json:"disk_size,omitempty"`
 
+	// DnsName The dns name of your instance.
+	DnsName InstanceDNSName `json:"dns_name"`
+
 	// FloatingIp The floating IP attached to the instance.
 	FloatingIp *struct {
 		// Id The ID of the floating IP.
@@ -522,6 +525,9 @@ type InstanceAction string
 
 // InstanceBillingType The billing type of the instance.
 type InstanceBillingType string
+
+// InstanceDNSName The dns name of your instance.
+type InstanceDNSName = string
 
 // InstanceDestroyOnShutdown Option that you can set at instance creation that will allow the instance to destroy on shutdown command
 type InstanceDestroyOnShutdown = bool
