@@ -4,7 +4,10 @@
 package genesiscloud
 
 import (
+	"encoding/json"
 	"time"
+
+	"github.com/oapi-codegen/runtime"
 )
 
 const (
@@ -487,8 +490,8 @@ type Instance struct {
 
 	// SecurityGroups The security groups of the instance.
 	SecurityGroups []struct {
-		// Id The security group ID.
-		Id InstanceSecurityGroupId `json:"id"`
+		// Id A unique identifier for each security group. This is automatically generated.
+		Id SecurityGroupId `json:"id"`
 
 		// Name The name of the security group.
 		Name string `json:"name"`
@@ -559,19 +562,51 @@ type InstanceReuseLongTermSubscription = string
 // InstanceSSHKeyId The ssh key ID.
 type InstanceSSHKeyId = string
 
-// InstanceSecurityGroupId The security group ID.
-type InstanceSecurityGroupId = string
-
-// InstanceSecurityGroupIds An array of security group ids.
-// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
-// You can override this behavior by providing a different Security Group.
-type InstanceSecurityGroupIds = []InstanceSecurityGroupId
-
 // InstanceStatus The instance status
 type InstanceStatus string
 
 // InstanceType The instance type identifier.
 type InstanceType = string
+
+// InstanceUpdateSecurityGroups defines model for Instance.UpdateSecurityGroups.
+type InstanceUpdateSecurityGroups struct {
+	union json.RawMessage
+}
+
+// InstanceUpdateSecurityGroupsAttach defines model for Instance.UpdateSecurityGroups.Attach.
+type InstanceUpdateSecurityGroupsAttach struct {
+	// Attach A unique identifier for each security group. This is automatically generated.
+	Attach SecurityGroupId `json:"attach"`
+}
+
+// InstanceUpdateSecurityGroupsDetach defines model for Instance.UpdateSecurityGroups.Detach.
+type InstanceUpdateSecurityGroupsDetach struct {
+	// Detach A unique identifier for each security group. This is automatically generated.
+	Detach SecurityGroupId `json:"detach"`
+}
+
+// InstanceUpdateSecurityGroupsList The instance's security group IDs.
+type InstanceUpdateSecurityGroupsList = []SecurityGroupId
+
+// InstanceUpdateVolumes defines model for Instance.UpdateVolumes.
+type InstanceUpdateVolumes struct {
+	union json.RawMessage
+}
+
+// InstanceUpdateVolumesAttach defines model for Instance.UpdateVolumes.Attach.
+type InstanceUpdateVolumesAttach struct {
+	// Attach A unique identifier for each volume. This is automatically generated.
+	Attach VolumeId `json:"attach"`
+}
+
+// InstanceUpdateVolumesDetach defines model for Instance.UpdateVolumes.Detach.
+type InstanceUpdateVolumesDetach struct {
+	// Detach A unique identifier for each volume. This is automatically generated.
+	Detach VolumeId `json:"detach"`
+}
+
+// InstanceUpdateVolumesList The instance's volume IDs.
+type InstanceUpdateVolumesList = []VolumeId
 
 // InstanceUserData defines model for Instance.UserData.
 type InstanceUserData = []struct {
@@ -636,8 +671,8 @@ type SecurityGroup struct {
 	Description string `json:"description"`
 
 	// Id A unique identifier for each security group. This is automatically generated.
-	Id         string `json:"id"`
-	IsInternal bool   `json:"is_internal"`
+	Id         SecurityGroupId `json:"id"`
+	IsInternal bool            `json:"is_internal"`
 
 	// Name The human-readable name for the security group.
 	Name string `json:"name"`
@@ -674,6 +709,9 @@ type SecurityGroupRuleProtocol string
 
 // SecurityGroupStatus The security group status.
 type SecurityGroupStatus string
+
+// SecurityGroupId A unique identifier for each security group. This is automatically generated.
+type SecurityGroupId = string
 
 // Snapshot defines model for Snapshot.
 type Snapshot struct {
@@ -1029,9 +1067,7 @@ type CreateInstanceJSONBody struct {
 	ReuseLongTermSubscription *InstanceReuseLongTermSubscription `json:"reuse_long_term_subscription,omitempty"`
 
 	// SecurityGroups An array of security group ids.
-	// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
-	// You can override this behavior by providing a different Security Group.
-	SecurityGroups *InstanceSecurityGroupIds `json:"security_groups,omitempty"`
+	SecurityGroups *[]SecurityGroupId `json:"security_groups,omitempty"`
 
 	// SshKeys An array of ssh key ids.
 	// This should not be provided if `password` authentication method is desired.
@@ -1058,15 +1094,9 @@ type UpdateInstanceJSONBody struct {
 	Name *InstanceName `json:"name,omitempty"`
 
 	// ReservationId The unique ID of the reservation the instance is associated with.
-	ReservationId *string `json:"reservation_id,omitempty"`
-
-	// SecurityGroups An array of security group ids.
-	// **Please Note**: By default the **standard security group** is set if you don"t specify any Security Groups.
-	// You can override this behavior by providing a different Security Group.
-	SecurityGroups *InstanceSecurityGroupIds `json:"security_groups,omitempty"`
-
-	// Volumes The instance's volumes IDs.
-	Volumes *[]VolumeId `json:"volumes,omitempty"`
+	ReservationId  *string                       `json:"reservation_id,omitempty"`
+	SecurityGroups *InstanceUpdateSecurityGroups `json:"security_groups,omitempty"`
+	Volumes        *InstanceUpdateVolumes        `json:"volumes,omitempty"`
 }
 
 // PerformInstanceActionJSONBody defines parameters for PerformInstanceAction.
@@ -1253,3 +1283,179 @@ type CreateVolumeJSONRequestBody CreateVolumeJSONBody
 
 // UpdateVolumeJSONRequestBody defines body for UpdateVolume for application/json ContentType.
 type UpdateVolumeJSONRequestBody UpdateVolumeJSONBody
+
+// AsInstanceUpdateSecurityGroupsList returns the union data inside the InstanceUpdateSecurityGroups as a InstanceUpdateSecurityGroupsList
+func (t InstanceUpdateSecurityGroups) AsInstanceUpdateSecurityGroupsList() (InstanceUpdateSecurityGroupsList, error) {
+	var body InstanceUpdateSecurityGroupsList
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateSecurityGroupsList overwrites any union data inside the InstanceUpdateSecurityGroups as the provided InstanceUpdateSecurityGroupsList
+func (t *InstanceUpdateSecurityGroups) FromInstanceUpdateSecurityGroupsList(v InstanceUpdateSecurityGroupsList) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateSecurityGroupsList performs a merge with any union data inside the InstanceUpdateSecurityGroups, using the provided InstanceUpdateSecurityGroupsList
+func (t *InstanceUpdateSecurityGroups) MergeInstanceUpdateSecurityGroupsList(v InstanceUpdateSecurityGroupsList) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsInstanceUpdateSecurityGroupsAttach returns the union data inside the InstanceUpdateSecurityGroups as a InstanceUpdateSecurityGroupsAttach
+func (t InstanceUpdateSecurityGroups) AsInstanceUpdateSecurityGroupsAttach() (InstanceUpdateSecurityGroupsAttach, error) {
+	var body InstanceUpdateSecurityGroupsAttach
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateSecurityGroupsAttach overwrites any union data inside the InstanceUpdateSecurityGroups as the provided InstanceUpdateSecurityGroupsAttach
+func (t *InstanceUpdateSecurityGroups) FromInstanceUpdateSecurityGroupsAttach(v InstanceUpdateSecurityGroupsAttach) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateSecurityGroupsAttach performs a merge with any union data inside the InstanceUpdateSecurityGroups, using the provided InstanceUpdateSecurityGroupsAttach
+func (t *InstanceUpdateSecurityGroups) MergeInstanceUpdateSecurityGroupsAttach(v InstanceUpdateSecurityGroupsAttach) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsInstanceUpdateSecurityGroupsDetach returns the union data inside the InstanceUpdateSecurityGroups as a InstanceUpdateSecurityGroupsDetach
+func (t InstanceUpdateSecurityGroups) AsInstanceUpdateSecurityGroupsDetach() (InstanceUpdateSecurityGroupsDetach, error) {
+	var body InstanceUpdateSecurityGroupsDetach
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateSecurityGroupsDetach overwrites any union data inside the InstanceUpdateSecurityGroups as the provided InstanceUpdateSecurityGroupsDetach
+func (t *InstanceUpdateSecurityGroups) FromInstanceUpdateSecurityGroupsDetach(v InstanceUpdateSecurityGroupsDetach) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateSecurityGroupsDetach performs a merge with any union data inside the InstanceUpdateSecurityGroups, using the provided InstanceUpdateSecurityGroupsDetach
+func (t *InstanceUpdateSecurityGroups) MergeInstanceUpdateSecurityGroupsDetach(v InstanceUpdateSecurityGroupsDetach) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t InstanceUpdateSecurityGroups) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *InstanceUpdateSecurityGroups) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
+
+// AsInstanceUpdateVolumesList returns the union data inside the InstanceUpdateVolumes as a InstanceUpdateVolumesList
+func (t InstanceUpdateVolumes) AsInstanceUpdateVolumesList() (InstanceUpdateVolumesList, error) {
+	var body InstanceUpdateVolumesList
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateVolumesList overwrites any union data inside the InstanceUpdateVolumes as the provided InstanceUpdateVolumesList
+func (t *InstanceUpdateVolumes) FromInstanceUpdateVolumesList(v InstanceUpdateVolumesList) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateVolumesList performs a merge with any union data inside the InstanceUpdateVolumes, using the provided InstanceUpdateVolumesList
+func (t *InstanceUpdateVolumes) MergeInstanceUpdateVolumesList(v InstanceUpdateVolumesList) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsInstanceUpdateVolumesAttach returns the union data inside the InstanceUpdateVolumes as a InstanceUpdateVolumesAttach
+func (t InstanceUpdateVolumes) AsInstanceUpdateVolumesAttach() (InstanceUpdateVolumesAttach, error) {
+	var body InstanceUpdateVolumesAttach
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateVolumesAttach overwrites any union data inside the InstanceUpdateVolumes as the provided InstanceUpdateVolumesAttach
+func (t *InstanceUpdateVolumes) FromInstanceUpdateVolumesAttach(v InstanceUpdateVolumesAttach) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateVolumesAttach performs a merge with any union data inside the InstanceUpdateVolumes, using the provided InstanceUpdateVolumesAttach
+func (t *InstanceUpdateVolumes) MergeInstanceUpdateVolumesAttach(v InstanceUpdateVolumesAttach) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsInstanceUpdateVolumesDetach returns the union data inside the InstanceUpdateVolumes as a InstanceUpdateVolumesDetach
+func (t InstanceUpdateVolumes) AsInstanceUpdateVolumesDetach() (InstanceUpdateVolumesDetach, error) {
+	var body InstanceUpdateVolumesDetach
+	err := json.Unmarshal(t.union, &body)
+	return body, err
+}
+
+// FromInstanceUpdateVolumesDetach overwrites any union data inside the InstanceUpdateVolumes as the provided InstanceUpdateVolumesDetach
+func (t *InstanceUpdateVolumes) FromInstanceUpdateVolumesDetach(v InstanceUpdateVolumesDetach) error {
+	b, err := json.Marshal(v)
+	t.union = b
+	return err
+}
+
+// MergeInstanceUpdateVolumesDetach performs a merge with any union data inside the InstanceUpdateVolumes, using the provided InstanceUpdateVolumesDetach
+func (t *InstanceUpdateVolumes) MergeInstanceUpdateVolumesDetach(v InstanceUpdateVolumesDetach) error {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t InstanceUpdateVolumes) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *InstanceUpdateVolumes) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
