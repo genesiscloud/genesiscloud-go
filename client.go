@@ -3,7 +3,7 @@ package genesiscloud
 import (
 	"fmt"
 
-	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
+	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 )
 
 const DefaultEndpoint = "https://api.genesiscloud.com/compute/v1"

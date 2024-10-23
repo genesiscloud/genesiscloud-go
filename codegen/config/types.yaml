@@ -4,7 +4,7 @@ generate:
 output: ../types.gen.go # relative to codegen.go
 output-options:
   user-templates:
-    # extended from https://github.com/deepmap/oapi-codegen/blob/f4cf8f9a570380c24c6ba03ae04b9393cf120692/pkg/codegen/templates/constants.tmpl
+    # extended from https://github.com/oapi-codegen/oapi-codegen/blob/fd1f9b3e448846c1c4749f5c7eaae60e2be7a02c/pkg/codegen/templates/constants.tmpl
     constants.tmpl: |
       {{- if gt (len .SecuritySchemeProviderNames) 0 }}
       const (
