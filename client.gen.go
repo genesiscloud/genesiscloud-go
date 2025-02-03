@@ -92,11 +92,8 @@ type ClientInterface interface {
 	// GetInstancesAvailability request
 	GetInstancesAvailability(ctx context.Context, region Region, params *GetInstancesAvailabilityParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListCatalog request
-	ListCatalog(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// ListFilesystems request
-	ListFilesystems(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListFilesystemsPaginated request
+	ListFilesystemsPaginated(ctx context.Context, params *ListFilesystemsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateFilesystemWithBody request with any body
 	CreateFilesystemWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -114,8 +111,8 @@ type ClientInterface interface {
 
 	UpdateFilesystem(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListFloatingIPs request
-	ListFloatingIPs(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListFloatingIPsPaginated request
+	ListFloatingIPsPaginated(ctx context.Context, params *ListFloatingIPsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateFloatingIPWithBody request with any body
 	CreateFloatingIPWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -133,11 +130,11 @@ type ClientInterface interface {
 
 	UpdateFloatingIP(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListImages request
-	ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListImagesPaginated request
+	ListImagesPaginated(ctx context.Context, params *ListImagesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListInstances request
-	ListInstances(ctx context.Context, params *ListInstancesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListInstancesPaginated request
+	ListInstancesPaginated(ctx context.Context, params *ListInstancesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateInstanceWithBody request with any body
 	CreateInstanceWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -155,16 +152,16 @@ type ClientInterface interface {
 
 	UpdateInstance(ctx context.Context, instanceId string, body UpdateInstanceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListInstanceActions request
-	ListInstanceActions(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetInstanceActions request
+	GetInstanceActions(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PerformInstanceActionWithBody request with any body
 	PerformInstanceActionWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	PerformInstanceAction(ctx context.Context, instanceId string, body PerformInstanceActionJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListInstanceSnapshots request
-	ListInstanceSnapshots(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListInstanceSnapshotsPaginated request
+	ListInstanceSnapshotsPaginated(ctx context.Context, instanceId string, params *ListInstanceSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateInstanceSnapshotWithBody request with any body
 	CreateInstanceSnapshotWithBody(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -174,8 +171,14 @@ type ClientInterface interface {
 	// GetInstanceUserMetadata request
 	GetInstanceUserMetadata(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListSecurityGroups request
-	ListSecurityGroups(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetQuotas request
+	GetQuotas(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetReservations request
+	GetReservations(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSecurityGroupsPaginated request
+	ListSecurityGroupsPaginated(ctx context.Context, params *ListSecurityGroupsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateSecurityGroupWithBody request with any body
 	CreateSecurityGroupWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -193,8 +196,8 @@ type ClientInterface interface {
 
 	UpdateSecurityGroup(ctx context.Context, securityGroupId string, body UpdateSecurityGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListSnapshots request
-	ListSnapshots(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListSnapshotsPaginated request
+	ListSnapshotsPaginated(ctx context.Context, params *ListSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateSnapshotWithBody request with any body
 	CreateSnapshotWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -212,8 +215,13 @@ type ClientInterface interface {
 
 	UpdateSnapshot(ctx context.Context, snapshotId string, body UpdateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListSSHKeys request
-	ListSSHKeys(ctx context.Context, params *ListSSHKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// CloneSnapshotWithBody request with any body
+	CloneSnapshotWithBody(ctx context.Context, snapshotId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CloneSnapshot(ctx context.Context, snapshotId string, body CloneSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSSHKeysPaginated request
+	ListSSHKeysPaginated(ctx context.Context, params *ListSSHKeysPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateSSHKeyWithBody request with any body
 	CreateSSHKeyWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -231,8 +239,8 @@ type ClientInterface interface {
 
 	UpdateSSHKey(ctx context.Context, sshKeyId string, body UpdateSSHKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListVolumes request
-	ListVolumes(ctx context.Context, params *ListVolumesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListVolumesPaginated request
+	ListVolumesPaginated(ctx context.Context, params *ListVolumesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateVolumeWithBody request with any body
 	CreateVolumeWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -263,20 +271,8 @@ func (c *Client) GetInstancesAvailability(ctx context.Context, region Region, pa
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListCatalog(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListCatalogRequest(c.Server, params)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) ListFilesystems(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListFilesystemsRequest(c.Server, params)
+func (c *Client) ListFilesystemsPaginated(ctx context.Context, params *ListFilesystemsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFilesystemsPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -359,8 +355,8 @@ func (c *Client) UpdateFilesystem(ctx context.Context, filesystemId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListFloatingIPs(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListFloatingIPsRequest(c.Server, params)
+func (c *Client) ListFloatingIPsPaginated(ctx context.Context, params *ListFloatingIPsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFloatingIPsPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -443,8 +439,8 @@ func (c *Client) UpdateFloatingIP(ctx context.Context, floatingIpId string, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListImages(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListImagesRequest(c.Server, params)
+func (c *Client) ListImagesPaginated(ctx context.Context, params *ListImagesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListImagesPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -455,8 +451,8 @@ func (c *Client) ListImages(ctx context.Context, params *ListImagesParams, reqEd
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListInstances(ctx context.Context, params *ListInstancesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListInstancesRequest(c.Server, params)
+func (c *Client) ListInstancesPaginated(ctx context.Context, params *ListInstancesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListInstancesPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -539,8 +535,8 @@ func (c *Client) UpdateInstance(ctx context.Context, instanceId string, body Upd
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListInstanceActions(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListInstanceActionsRequest(c.Server, instanceId)
+func (c *Client) GetInstanceActions(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetInstanceActionsRequest(c.Server, instanceId)
 	if err != nil {
 		return nil, err
 	}
@@ -575,8 +571,8 @@ func (c *Client) PerformInstanceAction(ctx context.Context, instanceId string, b
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListInstanceSnapshots(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListInstanceSnapshotsRequest(c.Server, instanceId, params)
+func (c *Client) ListInstanceSnapshotsPaginated(ctx context.Context, instanceId string, params *ListInstanceSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListInstanceSnapshotsPaginatedRequest(c.Server, instanceId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -623,8 +619,32 @@ func (c *Client) GetInstanceUserMetadata(ctx context.Context, instanceId string,
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListSecurityGroups(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSecurityGroupsRequest(c.Server, params)
+func (c *Client) GetQuotas(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetQuotasRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetReservations(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetReservationsRequest(c.Server)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSecurityGroupsPaginated(ctx context.Context, params *ListSecurityGroupsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSecurityGroupsPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -707,8 +727,8 @@ func (c *Client) UpdateSecurityGroup(ctx context.Context, securityGroupId string
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListSnapshots(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSnapshotsRequest(c.Server, params)
+func (c *Client) ListSnapshotsPaginated(ctx context.Context, params *ListSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSnapshotsPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -791,8 +811,32 @@ func (c *Client) UpdateSnapshot(ctx context.Context, snapshotId string, body Upd
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListSSHKeys(ctx context.Context, params *ListSSHKeysParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListSSHKeysRequest(c.Server, params)
+func (c *Client) CloneSnapshotWithBody(ctx context.Context, snapshotId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloneSnapshotRequestWithBody(c.Server, snapshotId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CloneSnapshot(ctx context.Context, snapshotId string, body CloneSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCloneSnapshotRequest(c.Server, snapshotId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSSHKeysPaginated(ctx context.Context, params *ListSSHKeysPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSSHKeysPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -875,8 +919,8 @@ func (c *Client) UpdateSSHKey(ctx context.Context, sshKeyId string, body UpdateS
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListVolumes(ctx context.Context, params *ListVolumesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListVolumesRequest(c.Server, params)
+func (c *Client) ListVolumesPaginated(ctx context.Context, params *ListVolumesPaginatedParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListVolumesPaginatedRequest(c.Server, params)
 	if err != nil {
 		return nil, err
 	}
@@ -1015,73 +1059,8 @@ func NewGetInstancesAvailabilityRequest(server string, region Region, params *Ge
 	return req, nil
 }
 
-// NewListCatalogRequest generates requests for ListCatalog
-func NewListCatalogRequest(server string, params *ListCatalogParams) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/catalog")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	if params != nil {
-		queryValues := queryURL.Query()
-
-		if params.Page != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "page", runtime.ParamLocationQuery, *params.Page); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		if params.PerPage != nil {
-
-			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "per_page", runtime.ParamLocationQuery, *params.PerPage); err != nil {
-				return nil, err
-			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
-				return nil, err
-			} else {
-				for k, v := range parsed {
-					for _, v2 := range v {
-						queryValues.Add(k, v2)
-					}
-				}
-			}
-
-		}
-
-		queryURL.RawQuery = queryValues.Encode()
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewListFilesystemsRequest generates requests for ListFilesystems
-func NewListFilesystemsRequest(server string, params *ListFilesystemsParams) (*http.Request, error) {
+// NewListFilesystemsPaginatedRequest generates requests for ListFilesystemsPaginated
+func NewListFilesystemsPaginatedRequest(server string, params *ListFilesystemsPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1300,8 +1279,8 @@ func NewUpdateFilesystemRequestWithBody(server string, filesystemId string, cont
 	return req, nil
 }
 
-// NewListFloatingIPsRequest generates requests for ListFloatingIPs
-func NewListFloatingIPsRequest(server string, params *ListFloatingIPsParams) (*http.Request, error) {
+// NewListFloatingIPsPaginatedRequest generates requests for ListFloatingIPsPaginated
+func NewListFloatingIPsPaginatedRequest(server string, params *ListFloatingIPsPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1520,8 +1499,8 @@ func NewUpdateFloatingIPRequestWithBody(server string, floatingIpId string, cont
 	return req, nil
 }
 
-// NewListImagesRequest generates requests for ListImages
-func NewListImagesRequest(server string, params *ListImagesParams) (*http.Request, error) {
+// NewListImagesPaginatedRequest generates requests for ListImagesPaginated
+func NewListImagesPaginatedRequest(server string, params *ListImagesPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1601,8 +1580,8 @@ func NewListImagesRequest(server string, params *ListImagesParams) (*http.Reques
 	return req, nil
 }
 
-// NewListInstancesRequest generates requests for ListInstances
-func NewListInstancesRequest(server string, params *ListInstancesParams) (*http.Request, error) {
+// NewListInstancesPaginatedRequest generates requests for ListInstancesPaginated
+func NewListInstancesPaginatedRequest(server string, params *ListInstancesPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -1821,8 +1800,8 @@ func NewUpdateInstanceRequestWithBody(server string, instanceId string, contentT
 	return req, nil
 }
 
-// NewListInstanceActionsRequest generates requests for ListInstanceActions
-func NewListInstanceActionsRequest(server string, instanceId string) (*http.Request, error) {
+// NewGetInstanceActionsRequest generates requests for GetInstanceActions
+func NewGetInstanceActionsRequest(server string, instanceId string) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1902,8 +1881,8 @@ func NewPerformInstanceActionRequestWithBody(server string, instanceId string, c
 	return req, nil
 }
 
-// NewListInstanceSnapshotsRequest generates requests for ListInstanceSnapshots
-func NewListInstanceSnapshotsRequest(server string, instanceId string, params *ListInstanceSnapshotsParams) (*http.Request, error) {
+// NewListInstanceSnapshotsPaginatedRequest generates requests for ListInstanceSnapshotsPaginated
+func NewListInstanceSnapshotsPaginatedRequest(server string, instanceId string, params *ListInstanceSnapshotsPaginatedParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -2055,8 +2034,62 @@ func NewGetInstanceUserMetadataRequest(server string, instanceId string) (*http.
 	return req, nil
 }
 
-// NewListSecurityGroupsRequest generates requests for ListSecurityGroups
-func NewListSecurityGroupsRequest(server string, params *ListSecurityGroupsParams) (*http.Request, error) {
+// NewGetQuotasRequest generates requests for GetQuotas
+func NewGetQuotasRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/quotas")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetReservationsRequest generates requests for GetReservations
+func NewGetReservationsRequest(server string) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/reservations")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSecurityGroupsPaginatedRequest generates requests for ListSecurityGroupsPaginated
+func NewListSecurityGroupsPaginatedRequest(server string, params *ListSecurityGroupsPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2275,8 +2308,8 @@ func NewUpdateSecurityGroupRequestWithBody(server string, securityGroupId string
 	return req, nil
 }
 
-// NewListSnapshotsRequest generates requests for ListSnapshots
-func NewListSnapshotsRequest(server string, params *ListSnapshotsParams) (*http.Request, error) {
+// NewListSnapshotsPaginatedRequest generates requests for ListSnapshotsPaginated
+func NewListSnapshotsPaginatedRequest(server string, params *ListSnapshotsPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2495,8 +2528,55 @@ func NewUpdateSnapshotRequestWithBody(server string, snapshotId string, contentT
 	return req, nil
 }
 
-// NewListSSHKeysRequest generates requests for ListSSHKeys
-func NewListSSHKeysRequest(server string, params *ListSSHKeysParams) (*http.Request, error) {
+// NewCloneSnapshotRequest calls the generic CloneSnapshot builder with application/json body
+func NewCloneSnapshotRequest(server string, snapshotId string, body CloneSnapshotJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCloneSnapshotRequestWithBody(server, snapshotId, "application/json", bodyReader)
+}
+
+// NewCloneSnapshotRequestWithBody generates requests for CloneSnapshot with any type of body
+func NewCloneSnapshotRequestWithBody(server string, snapshotId string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "snapshot_id", runtime.ParamLocationPath, snapshotId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/snapshots/%s/clone", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListSSHKeysPaginatedRequest generates requests for ListSSHKeysPaginated
+func NewListSSHKeysPaginatedRequest(server string, params *ListSSHKeysPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2715,8 +2795,8 @@ func NewUpdateSSHKeyRequestWithBody(server string, sshKeyId string, contentType 
 	return req, nil
 }
 
-// NewListVolumesRequest generates requests for ListVolumes
-func NewListVolumesRequest(server string, params *ListVolumesParams) (*http.Request, error) {
+// NewListVolumesPaginatedRequest generates requests for ListVolumesPaginated
+func NewListVolumesPaginatedRequest(server string, params *ListVolumesPaginatedParams) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -2981,11 +3061,8 @@ type ClientWithResponsesInterface interface {
 	// GetInstancesAvailabilityWithResponse request
 	GetInstancesAvailabilityWithResponse(ctx context.Context, region Region, params *GetInstancesAvailabilityParams, reqEditors ...RequestEditorFn) (*GetInstancesAvailabilityResponse, error)
 
-	// ListCatalogWithResponse request
-	ListCatalogWithResponse(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*ListCatalogResponse, error)
-
-	// ListFilesystemsWithResponse request
-	ListFilesystemsWithResponse(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*ListFilesystemsResponse, error)
+	// ListFilesystemsPaginatedWithResponse request
+	ListFilesystemsPaginatedWithResponse(ctx context.Context, params *ListFilesystemsPaginatedParams, reqEditors ...RequestEditorFn) (*ListFilesystemsPaginatedResponse, error)
 
 	// CreateFilesystemWithBodyWithResponse request with any body
 	CreateFilesystemWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFilesystemResponse, error)
@@ -3003,8 +3080,8 @@ type ClientWithResponsesInterface interface {
 
 	UpdateFilesystemWithResponse(ctx context.Context, filesystemId string, body UpdateFilesystemJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFilesystemResponse, error)
 
-	// ListFloatingIPsWithResponse request
-	ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error)
+	// ListFloatingIPsPaginatedWithResponse request
+	ListFloatingIPsPaginatedWithResponse(ctx context.Context, params *ListFloatingIPsPaginatedParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsPaginatedResponse, error)
 
 	// CreateFloatingIPWithBodyWithResponse request with any body
 	CreateFloatingIPWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFloatingIPResponse, error)
@@ -3022,11 +3099,11 @@ type ClientWithResponsesInterface interface {
 
 	UpdateFloatingIPWithResponse(ctx context.Context, floatingIpId string, body UpdateFloatingIPJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFloatingIPResponse, error)
 
-	// ListImagesWithResponse request
-	ListImagesWithResponse(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*ListImagesResponse, error)
+	// ListImagesPaginatedWithResponse request
+	ListImagesPaginatedWithResponse(ctx context.Context, params *ListImagesPaginatedParams, reqEditors ...RequestEditorFn) (*ListImagesPaginatedResponse, error)
 
-	// ListInstancesWithResponse request
-	ListInstancesWithResponse(ctx context.Context, params *ListInstancesParams, reqEditors ...RequestEditorFn) (*ListInstancesResponse, error)
+	// ListInstancesPaginatedWithResponse request
+	ListInstancesPaginatedWithResponse(ctx context.Context, params *ListInstancesPaginatedParams, reqEditors ...RequestEditorFn) (*ListInstancesPaginatedResponse, error)
 
 	// CreateInstanceWithBodyWithResponse request with any body
 	CreateInstanceWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInstanceResponse, error)
@@ -3044,16 +3121,16 @@ type ClientWithResponsesInterface interface {
 
 	UpdateInstanceWithResponse(ctx context.Context, instanceId string, body UpdateInstanceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateInstanceResponse, error)
 
-	// ListInstanceActionsWithResponse request
-	ListInstanceActionsWithResponse(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*ListInstanceActionsResponse, error)
+	// GetInstanceActionsWithResponse request
+	GetInstanceActionsWithResponse(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*GetInstanceActionsResponse, error)
 
 	// PerformInstanceActionWithBodyWithResponse request with any body
 	PerformInstanceActionWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PerformInstanceActionResponse, error)
 
 	PerformInstanceActionWithResponse(ctx context.Context, instanceId string, body PerformInstanceActionJSONRequestBody, reqEditors ...RequestEditorFn) (*PerformInstanceActionResponse, error)
 
-	// ListInstanceSnapshotsWithResponse request
-	ListInstanceSnapshotsWithResponse(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*ListInstanceSnapshotsResponse, error)
+	// ListInstanceSnapshotsPaginatedWithResponse request
+	ListInstanceSnapshotsPaginatedWithResponse(ctx context.Context, instanceId string, params *ListInstanceSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*ListInstanceSnapshotsPaginatedResponse, error)
 
 	// CreateInstanceSnapshotWithBodyWithResponse request with any body
 	CreateInstanceSnapshotWithBodyWithResponse(ctx context.Context, instanceId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateInstanceSnapshotResponse, error)
@@ -3063,8 +3140,14 @@ type ClientWithResponsesInterface interface {
 	// GetInstanceUserMetadataWithResponse request
 	GetInstanceUserMetadataWithResponse(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*GetInstanceUserMetadataResponse, error)
 
-	// ListSecurityGroupsWithResponse request
-	ListSecurityGroupsWithResponse(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*ListSecurityGroupsResponse, error)
+	// GetQuotasWithResponse request
+	GetQuotasWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetQuotasResponse, error)
+
+	// GetReservationsWithResponse request
+	GetReservationsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetReservationsResponse, error)
+
+	// ListSecurityGroupsPaginatedWithResponse request
+	ListSecurityGroupsPaginatedWithResponse(ctx context.Context, params *ListSecurityGroupsPaginatedParams, reqEditors ...RequestEditorFn) (*ListSecurityGroupsPaginatedResponse, error)
 
 	// CreateSecurityGroupWithBodyWithResponse request with any body
 	CreateSecurityGroupWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSecurityGroupResponse, error)
@@ -3082,8 +3165,8 @@ type ClientWithResponsesInterface interface {
 
 	UpdateSecurityGroupWithResponse(ctx context.Context, securityGroupId string, body UpdateSecurityGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSecurityGroupResponse, error)
 
-	// ListSnapshotsWithResponse request
-	ListSnapshotsWithResponse(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*ListSnapshotsResponse, error)
+	// ListSnapshotsPaginatedWithResponse request
+	ListSnapshotsPaginatedWithResponse(ctx context.Context, params *ListSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*ListSnapshotsPaginatedResponse, error)
 
 	// CreateSnapshotWithBodyWithResponse request with any body
 	CreateSnapshotWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSnapshotResponse, error)
@@ -3101,8 +3184,13 @@ type ClientWithResponsesInterface interface {
 
 	UpdateSnapshotWithResponse(ctx context.Context, snapshotId string, body UpdateSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSnapshotResponse, error)
 
-	// ListSSHKeysWithResponse request
-	ListSSHKeysWithResponse(ctx context.Context, params *ListSSHKeysParams, reqEditors ...RequestEditorFn) (*ListSSHKeysResponse, error)
+	// CloneSnapshotWithBodyWithResponse request with any body
+	CloneSnapshotWithBodyWithResponse(ctx context.Context, snapshotId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneSnapshotResponse, error)
+
+	CloneSnapshotWithResponse(ctx context.Context, snapshotId string, body CloneSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneSnapshotResponse, error)
+
+	// ListSSHKeysPaginatedWithResponse request
+	ListSSHKeysPaginatedWithResponse(ctx context.Context, params *ListSSHKeysPaginatedParams, reqEditors ...RequestEditorFn) (*ListSSHKeysPaginatedResponse, error)
 
 	// CreateSSHKeyWithBodyWithResponse request with any body
 	CreateSSHKeyWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateSSHKeyResponse, error)
@@ -3120,8 +3208,8 @@ type ClientWithResponsesInterface interface {
 
 	UpdateSSHKeyWithResponse(ctx context.Context, sshKeyId string, body UpdateSSHKeyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateSSHKeyResponse, error)
 
-	// ListVolumesWithResponse request
-	ListVolumesWithResponse(ctx context.Context, params *ListVolumesParams, reqEditors ...RequestEditorFn) (*ListVolumesResponse, error)
+	// ListVolumesPaginatedWithResponse request
+	ListVolumesPaginatedWithResponse(ctx context.Context, params *ListVolumesPaginatedParams, reqEditors ...RequestEditorFn) (*ListVolumesPaginatedResponse, error)
 
 	// CreateVolumeWithBodyWithResponse request with any body
 	CreateVolumeWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateVolumeResponse, error)
@@ -3163,30 +3251,7 @@ func (r GetInstancesAvailabilityResponse) StatusCode() int {
 	return 0
 }
 
-type ListCatalogResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *PaginatedCatalogResponse
-	JSONDefault  *ErrorResponse
-}
-
-// Status returns HTTPResponse.Status
-func (r ListCatalogResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r ListCatalogResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type ListFilesystemsResponse struct {
+type ListFilesystemsPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedFilesystemsResponse
@@ -3194,7 +3259,7 @@ type ListFilesystemsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListFilesystemsResponse) Status() string {
+func (r ListFilesystemsPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3202,7 +3267,7 @@ func (r ListFilesystemsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListFilesystemsResponse) StatusCode() int {
+func (r ListFilesystemsPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3300,7 +3365,7 @@ func (r UpdateFilesystemResponse) StatusCode() int {
 	return 0
 }
 
-type ListFloatingIPsResponse struct {
+type ListFloatingIPsPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedFloatingIPsResponse
@@ -3308,7 +3373,7 @@ type ListFloatingIPsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListFloatingIPsResponse) Status() string {
+func (r ListFloatingIPsPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3316,7 +3381,7 @@ func (r ListFloatingIPsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListFloatingIPsResponse) StatusCode() int {
+func (r ListFloatingIPsPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3414,7 +3479,7 @@ func (r UpdateFloatingIPResponse) StatusCode() int {
 	return 0
 }
 
-type ListImagesResponse struct {
+type ListImagesPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedImagesResponse
@@ -3422,7 +3487,7 @@ type ListImagesResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListImagesResponse) Status() string {
+func (r ListImagesPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3430,14 +3495,14 @@ func (r ListImagesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListImagesResponse) StatusCode() int {
+func (r ListImagesPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type ListInstancesResponse struct {
+type ListInstancesPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedInstancesResponse
@@ -3445,7 +3510,7 @@ type ListInstancesResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListInstancesResponse) Status() string {
+func (r ListInstancesPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3453,7 +3518,7 @@ func (r ListInstancesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListInstancesResponse) StatusCode() int {
+func (r ListInstancesPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3551,15 +3616,15 @@ func (r UpdateInstanceResponse) StatusCode() int {
 	return 0
 }
 
-type ListInstanceActionsResponse struct {
+type GetInstanceActionsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *InstanceListActionsResponse
+	JSON200      *InstanceGetActionsResponse
 	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r ListInstanceActionsResponse) Status() string {
+func (r GetInstanceActionsResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3567,7 +3632,7 @@ func (r ListInstanceActionsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListInstanceActionsResponse) StatusCode() int {
+func (r GetInstanceActionsResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3596,7 +3661,7 @@ func (r PerformInstanceActionResponse) StatusCode() int {
 	return 0
 }
 
-type ListInstanceSnapshotsResponse struct {
+type ListInstanceSnapshotsPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedSnapshotsResponse
@@ -3604,7 +3669,7 @@ type ListInstanceSnapshotsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListInstanceSnapshotsResponse) Status() string {
+func (r ListInstanceSnapshotsPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3612,7 +3677,7 @@ func (r ListInstanceSnapshotsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListInstanceSnapshotsResponse) StatusCode() int {
+func (r ListInstanceSnapshotsPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3665,15 +3730,15 @@ func (r GetInstanceUserMetadataResponse) StatusCode() int {
 	return 0
 }
 
-type ListSecurityGroupsResponse struct {
+type GetQuotasResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *PaginatedSecurityGroupsResponse
+	JSON200      *QuotasResponse
 	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r ListSecurityGroupsResponse) Status() string {
+func (r GetQuotasResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3681,7 +3746,53 @@ func (r ListSecurityGroupsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListSecurityGroupsResponse) StatusCode() int {
+func (r GetQuotasResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetReservationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ReservationsResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r GetReservationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetReservationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSecurityGroupsPaginatedResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PaginatedSecurityGroupsResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSecurityGroupsPaginatedResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSecurityGroupsPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3779,7 +3890,7 @@ func (r UpdateSecurityGroupResponse) StatusCode() int {
 	return 0
 }
 
-type ListSnapshotsResponse struct {
+type ListSnapshotsPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedSnapshotsResponse
@@ -3787,7 +3898,7 @@ type ListSnapshotsResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListSnapshotsResponse) Status() string {
+func (r ListSnapshotsPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3795,7 +3906,7 @@ func (r ListSnapshotsResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListSnapshotsResponse) StatusCode() int {
+func (r ListSnapshotsPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3893,15 +4004,15 @@ func (r UpdateSnapshotResponse) StatusCode() int {
 	return 0
 }
 
-type ListSSHKeysResponse struct {
+type CloneSnapshotResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *PaginatedSSHKeysResponse
+	JSON201      *SingleSnapshotResponse
 	JSONDefault  *ErrorResponse
 }
 
 // Status returns HTTPResponse.Status
-func (r ListSSHKeysResponse) Status() string {
+func (r CloneSnapshotResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3909,7 +4020,30 @@ func (r ListSSHKeysResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListSSHKeysResponse) StatusCode() int {
+func (r CloneSnapshotResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSSHKeysPaginatedResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PaginatedSSHKeysResponse
+	JSONDefault  *ErrorResponse
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSSHKeysPaginatedResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSSHKeysPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4007,7 +4141,7 @@ func (r UpdateSSHKeyResponse) StatusCode() int {
 	return 0
 }
 
-type ListVolumesResponse struct {
+type ListVolumesPaginatedResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *PaginatedVolumesResponse
@@ -4015,7 +4149,7 @@ type ListVolumesResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r ListVolumesResponse) Status() string {
+func (r ListVolumesPaginatedResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -4023,7 +4157,7 @@ func (r ListVolumesResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListVolumesResponse) StatusCode() int {
+func (r ListVolumesPaginatedResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -4130,22 +4264,13 @@ func (c *ClientWithResponses) GetInstancesAvailabilityWithResponse(ctx context.C
 	return ParseGetInstancesAvailabilityResponse(rsp)
 }
 
-// ListCatalogWithResponse request returning *ListCatalogResponse
-func (c *ClientWithResponses) ListCatalogWithResponse(ctx context.Context, params *ListCatalogParams, reqEditors ...RequestEditorFn) (*ListCatalogResponse, error) {
-	rsp, err := c.ListCatalog(ctx, params, reqEditors...)
+// ListFilesystemsPaginatedWithResponse request returning *ListFilesystemsPaginatedResponse
+func (c *ClientWithResponses) ListFilesystemsPaginatedWithResponse(ctx context.Context, params *ListFilesystemsPaginatedParams, reqEditors ...RequestEditorFn) (*ListFilesystemsPaginatedResponse, error) {
+	rsp, err := c.ListFilesystemsPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListCatalogResponse(rsp)
-}
-
-// ListFilesystemsWithResponse request returning *ListFilesystemsResponse
-func (c *ClientWithResponses) ListFilesystemsWithResponse(ctx context.Context, params *ListFilesystemsParams, reqEditors ...RequestEditorFn) (*ListFilesystemsResponse, error) {
-	rsp, err := c.ListFilesystems(ctx, params, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseListFilesystemsResponse(rsp)
+	return ParseListFilesystemsPaginatedResponse(rsp)
 }
 
 // CreateFilesystemWithBodyWithResponse request with arbitrary body returning *CreateFilesystemResponse
@@ -4200,13 +4325,13 @@ func (c *ClientWithResponses) UpdateFilesystemWithResponse(ctx context.Context, 
 	return ParseUpdateFilesystemResponse(rsp)
 }
 
-// ListFloatingIPsWithResponse request returning *ListFloatingIPsResponse
-func (c *ClientWithResponses) ListFloatingIPsWithResponse(ctx context.Context, params *ListFloatingIPsParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsResponse, error) {
-	rsp, err := c.ListFloatingIPs(ctx, params, reqEditors...)
+// ListFloatingIPsPaginatedWithResponse request returning *ListFloatingIPsPaginatedResponse
+func (c *ClientWithResponses) ListFloatingIPsPaginatedWithResponse(ctx context.Context, params *ListFloatingIPsPaginatedParams, reqEditors ...RequestEditorFn) (*ListFloatingIPsPaginatedResponse, error) {
+	rsp, err := c.ListFloatingIPsPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListFloatingIPsResponse(rsp)
+	return ParseListFloatingIPsPaginatedResponse(rsp)
 }
 
 // CreateFloatingIPWithBodyWithResponse request with arbitrary body returning *CreateFloatingIPResponse
@@ -4261,22 +4386,22 @@ func (c *ClientWithResponses) UpdateFloatingIPWithResponse(ctx context.Context, 
 	return ParseUpdateFloatingIPResponse(rsp)
 }
 
-// ListImagesWithResponse request returning *ListImagesResponse
-func (c *ClientWithResponses) ListImagesWithResponse(ctx context.Context, params *ListImagesParams, reqEditors ...RequestEditorFn) (*ListImagesResponse, error) {
-	rsp, err := c.ListImages(ctx, params, reqEditors...)
+// ListImagesPaginatedWithResponse request returning *ListImagesPaginatedResponse
+func (c *ClientWithResponses) ListImagesPaginatedWithResponse(ctx context.Context, params *ListImagesPaginatedParams, reqEditors ...RequestEditorFn) (*ListImagesPaginatedResponse, error) {
+	rsp, err := c.ListImagesPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListImagesResponse(rsp)
+	return ParseListImagesPaginatedResponse(rsp)
 }
 
-// ListInstancesWithResponse request returning *ListInstancesResponse
-func (c *ClientWithResponses) ListInstancesWithResponse(ctx context.Context, params *ListInstancesParams, reqEditors ...RequestEditorFn) (*ListInstancesResponse, error) {
-	rsp, err := c.ListInstances(ctx, params, reqEditors...)
+// ListInstancesPaginatedWithResponse request returning *ListInstancesPaginatedResponse
+func (c *ClientWithResponses) ListInstancesPaginatedWithResponse(ctx context.Context, params *ListInstancesPaginatedParams, reqEditors ...RequestEditorFn) (*ListInstancesPaginatedResponse, error) {
+	rsp, err := c.ListInstancesPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListInstancesResponse(rsp)
+	return ParseListInstancesPaginatedResponse(rsp)
 }
 
 // CreateInstanceWithBodyWithResponse request with arbitrary body returning *CreateInstanceResponse
@@ -4331,13 +4456,13 @@ func (c *ClientWithResponses) UpdateInstanceWithResponse(ctx context.Context, in
 	return ParseUpdateInstanceResponse(rsp)
 }
 
-// ListInstanceActionsWithResponse request returning *ListInstanceActionsResponse
-func (c *ClientWithResponses) ListInstanceActionsWithResponse(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*ListInstanceActionsResponse, error) {
-	rsp, err := c.ListInstanceActions(ctx, instanceId, reqEditors...)
+// GetInstanceActionsWithResponse request returning *GetInstanceActionsResponse
+func (c *ClientWithResponses) GetInstanceActionsWithResponse(ctx context.Context, instanceId string, reqEditors ...RequestEditorFn) (*GetInstanceActionsResponse, error) {
+	rsp, err := c.GetInstanceActions(ctx, instanceId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListInstanceActionsResponse(rsp)
+	return ParseGetInstanceActionsResponse(rsp)
 }
 
 // PerformInstanceActionWithBodyWithResponse request with arbitrary body returning *PerformInstanceActionResponse
@@ -4357,13 +4482,13 @@ func (c *ClientWithResponses) PerformInstanceActionWithResponse(ctx context.Cont
 	return ParsePerformInstanceActionResponse(rsp)
 }
 
-// ListInstanceSnapshotsWithResponse request returning *ListInstanceSnapshotsResponse
-func (c *ClientWithResponses) ListInstanceSnapshotsWithResponse(ctx context.Context, instanceId string, params *ListInstanceSnapshotsParams, reqEditors ...RequestEditorFn) (*ListInstanceSnapshotsResponse, error) {
-	rsp, err := c.ListInstanceSnapshots(ctx, instanceId, params, reqEditors...)
+// ListInstanceSnapshotsPaginatedWithResponse request returning *ListInstanceSnapshotsPaginatedResponse
+func (c *ClientWithResponses) ListInstanceSnapshotsPaginatedWithResponse(ctx context.Context, instanceId string, params *ListInstanceSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*ListInstanceSnapshotsPaginatedResponse, error) {
+	rsp, err := c.ListInstanceSnapshotsPaginated(ctx, instanceId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListInstanceSnapshotsResponse(rsp)
+	return ParseListInstanceSnapshotsPaginatedResponse(rsp)
 }
 
 // CreateInstanceSnapshotWithBodyWithResponse request with arbitrary body returning *CreateInstanceSnapshotResponse
@@ -4392,13 +4517,31 @@ func (c *ClientWithResponses) GetInstanceUserMetadataWithResponse(ctx context.Co
 	return ParseGetInstanceUserMetadataResponse(rsp)
 }
 
-// ListSecurityGroupsWithResponse request returning *ListSecurityGroupsResponse
-func (c *ClientWithResponses) ListSecurityGroupsWithResponse(ctx context.Context, params *ListSecurityGroupsParams, reqEditors ...RequestEditorFn) (*ListSecurityGroupsResponse, error) {
-	rsp, err := c.ListSecurityGroups(ctx, params, reqEditors...)
+// GetQuotasWithResponse request returning *GetQuotasResponse
+func (c *ClientWithResponses) GetQuotasWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetQuotasResponse, error) {
+	rsp, err := c.GetQuotas(ctx, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListSecurityGroupsResponse(rsp)
+	return ParseGetQuotasResponse(rsp)
+}
+
+// GetReservationsWithResponse request returning *GetReservationsResponse
+func (c *ClientWithResponses) GetReservationsWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetReservationsResponse, error) {
+	rsp, err := c.GetReservations(ctx, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetReservationsResponse(rsp)
+}
+
+// ListSecurityGroupsPaginatedWithResponse request returning *ListSecurityGroupsPaginatedResponse
+func (c *ClientWithResponses) ListSecurityGroupsPaginatedWithResponse(ctx context.Context, params *ListSecurityGroupsPaginatedParams, reqEditors ...RequestEditorFn) (*ListSecurityGroupsPaginatedResponse, error) {
+	rsp, err := c.ListSecurityGroupsPaginated(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSecurityGroupsPaginatedResponse(rsp)
 }
 
 // CreateSecurityGroupWithBodyWithResponse request with arbitrary body returning *CreateSecurityGroupResponse
@@ -4453,13 +4596,13 @@ func (c *ClientWithResponses) UpdateSecurityGroupWithResponse(ctx context.Contex
 	return ParseUpdateSecurityGroupResponse(rsp)
 }
 
-// ListSnapshotsWithResponse request returning *ListSnapshotsResponse
-func (c *ClientWithResponses) ListSnapshotsWithResponse(ctx context.Context, params *ListSnapshotsParams, reqEditors ...RequestEditorFn) (*ListSnapshotsResponse, error) {
-	rsp, err := c.ListSnapshots(ctx, params, reqEditors...)
+// ListSnapshotsPaginatedWithResponse request returning *ListSnapshotsPaginatedResponse
+func (c *ClientWithResponses) ListSnapshotsPaginatedWithResponse(ctx context.Context, params *ListSnapshotsPaginatedParams, reqEditors ...RequestEditorFn) (*ListSnapshotsPaginatedResponse, error) {
+	rsp, err := c.ListSnapshotsPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListSnapshotsResponse(rsp)
+	return ParseListSnapshotsPaginatedResponse(rsp)
 }
 
 // CreateSnapshotWithBodyWithResponse request with arbitrary body returning *CreateSnapshotResponse
@@ -4514,13 +4657,30 @@ func (c *ClientWithResponses) UpdateSnapshotWithResponse(ctx context.Context, sn
 	return ParseUpdateSnapshotResponse(rsp)
 }
 
-// ListSSHKeysWithResponse request returning *ListSSHKeysResponse
-func (c *ClientWithResponses) ListSSHKeysWithResponse(ctx context.Context, params *ListSSHKeysParams, reqEditors ...RequestEditorFn) (*ListSSHKeysResponse, error) {
-	rsp, err := c.ListSSHKeys(ctx, params, reqEditors...)
+// CloneSnapshotWithBodyWithResponse request with arbitrary body returning *CloneSnapshotResponse
+func (c *ClientWithResponses) CloneSnapshotWithBodyWithResponse(ctx context.Context, snapshotId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CloneSnapshotResponse, error) {
+	rsp, err := c.CloneSnapshotWithBody(ctx, snapshotId, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListSSHKeysResponse(rsp)
+	return ParseCloneSnapshotResponse(rsp)
+}
+
+func (c *ClientWithResponses) CloneSnapshotWithResponse(ctx context.Context, snapshotId string, body CloneSnapshotJSONRequestBody, reqEditors ...RequestEditorFn) (*CloneSnapshotResponse, error) {
+	rsp, err := c.CloneSnapshot(ctx, snapshotId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCloneSnapshotResponse(rsp)
+}
+
+// ListSSHKeysPaginatedWithResponse request returning *ListSSHKeysPaginatedResponse
+func (c *ClientWithResponses) ListSSHKeysPaginatedWithResponse(ctx context.Context, params *ListSSHKeysPaginatedParams, reqEditors ...RequestEditorFn) (*ListSSHKeysPaginatedResponse, error) {
+	rsp, err := c.ListSSHKeysPaginated(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSSHKeysPaginatedResponse(rsp)
 }
 
 // CreateSSHKeyWithBodyWithResponse request with arbitrary body returning *CreateSSHKeyResponse
@@ -4575,13 +4735,13 @@ func (c *ClientWithResponses) UpdateSSHKeyWithResponse(ctx context.Context, sshK
 	return ParseUpdateSSHKeyResponse(rsp)
 }
 
-// ListVolumesWithResponse request returning *ListVolumesResponse
-func (c *ClientWithResponses) ListVolumesWithResponse(ctx context.Context, params *ListVolumesParams, reqEditors ...RequestEditorFn) (*ListVolumesResponse, error) {
-	rsp, err := c.ListVolumes(ctx, params, reqEditors...)
+// ListVolumesPaginatedWithResponse request returning *ListVolumesPaginatedResponse
+func (c *ClientWithResponses) ListVolumesPaginatedWithResponse(ctx context.Context, params *ListVolumesPaginatedParams, reqEditors ...RequestEditorFn) (*ListVolumesPaginatedResponse, error) {
+	rsp, err := c.ListVolumesPaginated(ctx, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListVolumesResponse(rsp)
+	return ParseListVolumesPaginatedResponse(rsp)
 }
 
 // CreateVolumeWithBodyWithResponse request with arbitrary body returning *CreateVolumeResponse
@@ -4669,48 +4829,15 @@ func ParseGetInstancesAvailabilityResponse(rsp *http.Response) (*GetInstancesAva
 	return response, nil
 }
 
-// ParseListCatalogResponse parses an HTTP response from a ListCatalogWithResponse call
-func ParseListCatalogResponse(rsp *http.Response) (*ListCatalogResponse, error) {
+// ParseListFilesystemsPaginatedResponse parses an HTTP response from a ListFilesystemsPaginatedWithResponse call
+func ParseListFilesystemsPaginatedResponse(rsp *http.Response) (*ListFilesystemsPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListCatalogResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest PaginatedCatalogResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
-		var dest ErrorResponse
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSONDefault = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseListFilesystemsResponse parses an HTTP response from a ListFilesystemsWithResponse call
-func ParseListFilesystemsResponse(rsp *http.Response) (*ListFilesystemsResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &ListFilesystemsResponse{
+	response := &ListFilesystemsPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -4860,15 +4987,15 @@ func ParseUpdateFilesystemResponse(rsp *http.Response) (*UpdateFilesystemRespons
 	return response, nil
 }
 
-// ParseListFloatingIPsResponse parses an HTTP response from a ListFloatingIPsWithResponse call
-func ParseListFloatingIPsResponse(rsp *http.Response) (*ListFloatingIPsResponse, error) {
+// ParseListFloatingIPsPaginatedResponse parses an HTTP response from a ListFloatingIPsPaginatedWithResponse call
+func ParseListFloatingIPsPaginatedResponse(rsp *http.Response) (*ListFloatingIPsPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListFloatingIPsResponse{
+	response := &ListFloatingIPsPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5018,15 +5145,15 @@ func ParseUpdateFloatingIPResponse(rsp *http.Response) (*UpdateFloatingIPRespons
 	return response, nil
 }
 
-// ParseListImagesResponse parses an HTTP response from a ListImagesWithResponse call
-func ParseListImagesResponse(rsp *http.Response) (*ListImagesResponse, error) {
+// ParseListImagesPaginatedResponse parses an HTTP response from a ListImagesPaginatedWithResponse call
+func ParseListImagesPaginatedResponse(rsp *http.Response) (*ListImagesPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListImagesResponse{
+	response := &ListImagesPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5051,15 +5178,15 @@ func ParseListImagesResponse(rsp *http.Response) (*ListImagesResponse, error) {
 	return response, nil
 }
 
-// ParseListInstancesResponse parses an HTTP response from a ListInstancesWithResponse call
-func ParseListInstancesResponse(rsp *http.Response) (*ListInstancesResponse, error) {
+// ParseListInstancesPaginatedResponse parses an HTTP response from a ListInstancesPaginatedWithResponse call
+func ParseListInstancesPaginatedResponse(rsp *http.Response) (*ListInstancesPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListInstancesResponse{
+	response := &ListInstancesPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5209,22 +5336,22 @@ func ParseUpdateInstanceResponse(rsp *http.Response) (*UpdateInstanceResponse, e
 	return response, nil
 }
 
-// ParseListInstanceActionsResponse parses an HTTP response from a ListInstanceActionsWithResponse call
-func ParseListInstanceActionsResponse(rsp *http.Response) (*ListInstanceActionsResponse, error) {
+// ParseGetInstanceActionsResponse parses an HTTP response from a GetInstanceActionsWithResponse call
+func ParseGetInstanceActionsResponse(rsp *http.Response) (*GetInstanceActionsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListInstanceActionsResponse{
+	response := &GetInstanceActionsResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest InstanceListActionsResponse
+		var dest InstanceGetActionsResponse
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5268,15 +5395,15 @@ func ParsePerformInstanceActionResponse(rsp *http.Response) (*PerformInstanceAct
 	return response, nil
 }
 
-// ParseListInstanceSnapshotsResponse parses an HTTP response from a ListInstanceSnapshotsWithResponse call
-func ParseListInstanceSnapshotsResponse(rsp *http.Response) (*ListInstanceSnapshotsResponse, error) {
+// ParseListInstanceSnapshotsPaginatedResponse parses an HTTP response from a ListInstanceSnapshotsPaginatedWithResponse call
+func ParseListInstanceSnapshotsPaginatedResponse(rsp *http.Response) (*ListInstanceSnapshotsPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListInstanceSnapshotsResponse{
+	response := &ListInstanceSnapshotsPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5367,15 +5494,81 @@ func ParseGetInstanceUserMetadataResponse(rsp *http.Response) (*GetInstanceUserM
 	return response, nil
 }
 
-// ParseListSecurityGroupsResponse parses an HTTP response from a ListSecurityGroupsWithResponse call
-func ParseListSecurityGroupsResponse(rsp *http.Response) (*ListSecurityGroupsResponse, error) {
+// ParseGetQuotasResponse parses an HTTP response from a GetQuotasWithResponse call
+func ParseGetQuotasResponse(rsp *http.Response) (*GetQuotasResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListSecurityGroupsResponse{
+	response := &GetQuotasResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest QuotasResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetReservationsResponse parses an HTTP response from a GetReservationsWithResponse call
+func ParseGetReservationsResponse(rsp *http.Response) (*GetReservationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetReservationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ReservationsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSecurityGroupsPaginatedResponse parses an HTTP response from a ListSecurityGroupsPaginatedWithResponse call
+func ParseListSecurityGroupsPaginatedResponse(rsp *http.Response) (*ListSecurityGroupsPaginatedResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSecurityGroupsPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5525,15 +5718,15 @@ func ParseUpdateSecurityGroupResponse(rsp *http.Response) (*UpdateSecurityGroupR
 	return response, nil
 }
 
-// ParseListSnapshotsResponse parses an HTTP response from a ListSnapshotsWithResponse call
-func ParseListSnapshotsResponse(rsp *http.Response) (*ListSnapshotsResponse, error) {
+// ParseListSnapshotsPaginatedResponse parses an HTTP response from a ListSnapshotsPaginatedWithResponse call
+func ParseListSnapshotsPaginatedResponse(rsp *http.Response) (*ListSnapshotsPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListSnapshotsResponse{
+	response := &ListSnapshotsPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5683,15 +5876,48 @@ func ParseUpdateSnapshotResponse(rsp *http.Response) (*UpdateSnapshotResponse, e
 	return response, nil
 }
 
-// ParseListSSHKeysResponse parses an HTTP response from a ListSSHKeysWithResponse call
-func ParseListSSHKeysResponse(rsp *http.Response) (*ListSSHKeysResponse, error) {
+// ParseCloneSnapshotResponse parses an HTTP response from a CloneSnapshotWithResponse call
+func ParseCloneSnapshotResponse(rsp *http.Response) (*CloneSnapshotResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListSSHKeysResponse{
+	response := &CloneSnapshotResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest SingleSnapshotResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && true:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSONDefault = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSSHKeysPaginatedResponse parses an HTTP response from a ListSSHKeysPaginatedWithResponse call
+func ParseListSSHKeysPaginatedResponse(rsp *http.Response) (*ListSSHKeysPaginatedResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSSHKeysPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -5841,15 +6067,15 @@ func ParseUpdateSSHKeyResponse(rsp *http.Response) (*UpdateSSHKeyResponse, error
 	return response, nil
 }
 
-// ParseListVolumesResponse parses an HTTP response from a ListVolumesWithResponse call
-func ParseListVolumesResponse(rsp *http.Response) (*ListVolumesResponse, error) {
+// ParseListVolumesPaginatedResponse parses an HTTP response from a ListVolumesPaginatedWithResponse call
+func ParseListVolumesPaginatedResponse(rsp *http.Response) (*ListVolumesPaginatedResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListVolumesResponse{
+	response := &ListVolumesPaginatedResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
