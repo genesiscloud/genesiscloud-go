@@ -97,6 +97,7 @@ const (
 	InstanceBillingTypePrepaid3Month  InstanceBillingType = "prepaid-3-month"
 	InstanceBillingTypePrepaid6Month  InstanceBillingType = "prepaid-6-month"
 	InstanceBillingTypePrepaidMonthly InstanceBillingType = "prepaid-monthly"
+	InstanceBillingTypeReserved       InstanceBillingType = "reserved"
 )
 
 var AllInstanceBillingTypes = []InstanceBillingType{
@@ -105,6 +106,7 @@ var AllInstanceBillingTypes = []InstanceBillingType{
 	InstanceBillingTypePrepaid3Month,
 	InstanceBillingTypePrepaid6Month,
 	InstanceBillingTypePrepaidMonthly,
+	InstanceBillingTypeReserved,
 }
 
 // Defines values for InstanceStatus.
@@ -159,13 +161,11 @@ var AllOSTypes = []OSType{
 
 // Defines values for Region.
 const (
-	RegionARCISHAF1  Region = "ARC-IS-HAF-1"
 	RegionEUCDEMUC1  Region = "EUC-DE-MUC-1"
 	RegionNORDNOKRS1 Region = "NORD-NO-KRS-1"
 )
 
 var AllRegions = []Region{
-	RegionARCISHAF1,
 	RegionEUCDEMUC1,
 	RegionNORDNOKRS1,
 }
@@ -271,41 +271,6 @@ const (
 
 var AllCreateFloatingIPJSONBodyVersions = []CreateFloatingIPJSONBodyVersion{
 	CreateFloatingIPJSONBodyVersionIpv4,
-}
-
-// Catalog defines model for Catalog.
-type Catalog struct {
-	BaseImageIds []string  `json:"base_image_ids"`
-	CreatedAt    Timestamp `json:"created_at"`
-
-	// Description The human-readable description for the catalog.
-	Description string        `json:"description"`
-	Fields      CatalogFields `json:"fields"`
-
-	// Id A unique identifier for each catalog. This is automatically generated.
-	Id     string `json:"id"`
-	Images []struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
-	} `json:"images"`
-
-	// LogoUrl The url of the catalog
-	LogoUrl string `json:"logo_url"`
-
-	// Name The human-readable name for the catalog.
-	Name string `json:"name"`
-
-	// RequiresDriver The image catalog requires driver
-	RequiresDriver bool      `json:"requires_driver"`
-	UpdatedAt      Timestamp `json:"updated_at"`
-}
-
-// CatalogFields defines model for Catalog.Fields.
-type CatalogFields = []struct {
-	Env   string `json:"env"`
-	Key   string `json:"key"`
-	Label string `json:"label"`
-	Type  string `json:"type"`
 }
 
 // Error defines model for Error.
@@ -636,8 +601,35 @@ type InstancesAvailability struct {
 // OSType The OS type.
 type OSType string
 
+// Quota defines model for Quota.
+type Quota struct {
+	Capacity int `json:"capacity"`
+	Flavors  []struct {
+		FlavorName  string `json:"flavor_name"`
+		Per         string `json:"per"`
+		ProductName string `json:"product_name"`
+		Used        int    `json:"used"`
+	} `json:"flavors"`
+	Key  string `json:"key"`
+	Used int    `json:"used"`
+}
+
 // Region The region identifier.
 type Region string
+
+// Reservation defines model for Reservation.
+type Reservation struct {
+	FlavorName string                 `json:"flavor_name"`
+	Id         string                 `json:"id"`
+	Metadata   map[string]interface{} `json:"metadata"`
+	Quota      struct {
+		Capacity int `json:"capacity"`
+		Used     int `json:"used"`
+	} `json:"quota"`
+
+	// Region The region identifier.
+	Region Region `json:"region"`
+}
 
 // SSHKey defines model for SSHKey.
 type SSHKey struct {
@@ -759,10 +751,10 @@ type Volume struct {
 	// Instances The attached instances.
 	Instances []struct {
 		// Id The id of the attached instance.
-		Id *string `json:"id,omitempty"`
+		Id string `json:"id"`
 
 		// Name The name of the attached instance.
-		Name *string `json:"name,omitempty"`
+		Name string `json:"name"`
 	} `json:"instances"`
 
 	// Name The human-readable name for the volume.
@@ -798,24 +790,16 @@ type PerPageQueryParameter = int
 // ErrorResponse defines model for ErrorResponse.
 type ErrorResponse = Error
 
-// InstanceGetInstanceUserMetadataResponse defines model for Instance.GetInstanceUserMetadataResponse.
-type InstanceGetInstanceUserMetadataResponse map[string]interface{}
-
-// InstanceListActionsResponse defines model for Instance.ListActionsResponse.
-type InstanceListActionsResponse struct {
+// InstanceGetActionsResponse defines model for Instance.GetActionsResponse.
+type InstanceGetActionsResponse struct {
 	Actions []InstanceAction `json:"actions"`
 }
 
+// InstanceGetInstanceUserMetadataResponse defines model for Instance.GetInstanceUserMetadataResponse.
+type InstanceGetInstanceUserMetadataResponse map[string]interface{}
+
 // InstancesAvailabilityResponse defines model for InstancesAvailabilityResponse.
 type InstancesAvailabilityResponse = InstancesAvailability
-
-// PaginatedCatalogResponse defines model for PaginatedCatalogResponse.
-type PaginatedCatalogResponse struct {
-	Catalog    []Catalog `json:"catalog"`
-	Page       int       `json:"page"`
-	PerPage    int       `json:"per_page"`
-	TotalCount int       `json:"total_count"`
-}
 
 // PaginatedFilesystemsResponse defines model for PaginatedFilesystemsResponse.
 type PaginatedFilesystemsResponse struct {
@@ -881,6 +865,16 @@ type PaginatedVolumesResponse struct {
 	Volumes    []Volume `json:"volumes"`
 }
 
+// QuotasResponse defines model for QuotasResponse.
+type QuotasResponse struct {
+	Quotas []Quota `json:"quotas"`
+}
+
+// ReservationsResponse defines model for ReservationsResponse.
+type ReservationsResponse struct {
+	Reservations []Reservation `json:"reservations"`
+}
+
 // SingleFilesystemResponse defines model for SingleFilesystemResponse.
 type SingleFilesystemResponse struct {
 	Filesystem Filesystem `json:"filesystem"`
@@ -919,14 +913,8 @@ type GetInstancesAvailabilityParams struct {
 	Placement *string `form:"placement,omitempty" json:"placement,omitempty"`
 }
 
-// ListCatalogParams defines parameters for ListCatalog.
-type ListCatalogParams struct {
-	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
-	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
-}
-
-// ListFilesystemsParams defines parameters for ListFilesystems.
-type ListFilesystemsParams struct {
+// ListFilesystemsPaginatedParams defines parameters for ListFilesystemsPaginated.
+type ListFilesystemsPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -961,8 +949,8 @@ type UpdateFilesystemJSONBody struct {
 	Size *int `json:"size,omitempty"`
 }
 
-// ListFloatingIPsParams defines parameters for ListFloatingIPs.
-type ListFloatingIPsParams struct {
+// ListFloatingIPsPaginatedParams defines parameters for ListFloatingIPsPaginated.
+type ListFloatingIPsPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -994,15 +982,15 @@ type UpdateFloatingIPJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// ListImagesParams defines parameters for ListImages.
-type ListImagesParams struct {
+// ListImagesPaginatedParams defines parameters for ListImagesPaginated.
+type ListImagesPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 	Type    *ImageType             `form:"type,omitempty" json:"type,omitempty"`
 }
 
-// ListInstancesParams defines parameters for ListInstances.
-type ListInstancesParams struct {
+// ListInstancesPaginatedParams defines parameters for ListInstancesPaginated.
+type ListInstancesPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1104,8 +1092,8 @@ type PerformInstanceActionJSONBody struct {
 	Action InstanceAction `json:"action"`
 }
 
-// ListInstanceSnapshotsParams defines parameters for ListInstanceSnapshots.
-type ListInstanceSnapshotsParams struct {
+// ListInstanceSnapshotsPaginatedParams defines parameters for ListInstanceSnapshotsPaginated.
+type ListInstanceSnapshotsPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1114,10 +1102,13 @@ type ListInstanceSnapshotsParams struct {
 type CreateInstanceSnapshotJSONBody struct {
 	// Name Name of the snapshot.
 	Name string `json:"name"`
+
+	// ReplicatedRegion The region identifier.
+	ReplicatedRegion *Region `json:"replicated_region,omitempty"`
 }
 
-// ListSecurityGroupsParams defines parameters for ListSecurityGroups.
-type ListSecurityGroupsParams struct {
+// ListSecurityGroupsPaginatedParams defines parameters for ListSecurityGroupsPaginated.
+type ListSecurityGroupsPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1149,8 +1140,8 @@ type UpdateSecurityGroupJSONBody struct {
 	Rules *[]SecurityGroupRule `json:"rules,omitempty"`
 }
 
-// ListSnapshotsParams defines parameters for ListSnapshots.
-type ListSnapshotsParams struct {
+// ListSnapshotsPaginatedParams defines parameters for ListSnapshotsPaginated.
+type ListSnapshotsPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1179,8 +1170,17 @@ type UpdateSnapshotJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// ListSSHKeysParams defines parameters for ListSSHKeys.
-type ListSSHKeysParams struct {
+// CloneSnapshotJSONBody defines parameters for CloneSnapshot.
+type CloneSnapshotJSONBody struct {
+	// Name The human-readable name set for the clone of the snapshot.
+	Name string `json:"name"`
+
+	// Region The region identifier.
+	Region Region `json:"region"`
+}
+
+// ListSSHKeysPaginatedParams defines parameters for ListSSHKeysPaginated.
+type ListSSHKeysPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1200,8 +1200,8 @@ type UpdateSSHKeyJSONBody struct {
 	Name *string `json:"name,omitempty"`
 }
 
-// ListVolumesParams defines parameters for ListVolumes.
-type ListVolumesParams struct {
+// ListVolumesPaginatedParams defines parameters for ListVolumesPaginated.
+type ListVolumesPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
 }
@@ -1271,6 +1271,9 @@ type CreateSnapshotJSONRequestBody CreateSnapshotJSONBody
 
 // UpdateSnapshotJSONRequestBody defines body for UpdateSnapshot for application/json ContentType.
 type UpdateSnapshotJSONRequestBody UpdateSnapshotJSONBody
+
+// CloneSnapshotJSONRequestBody defines body for CloneSnapshot for application/json ContentType.
+type CloneSnapshotJSONRequestBody CloneSnapshotJSONBody
 
 // CreateSSHKeyJSONRequestBody defines body for CreateSSHKey for application/json ContentType.
 type CreateSSHKeyJSONRequestBody CreateSSHKeyJSONBody
