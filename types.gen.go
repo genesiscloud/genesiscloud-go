@@ -64,17 +64,11 @@ var AllFloatingIpStatuss = []FloatingIpStatus{
 
 // Defines values for ImageType.
 const (
-	ImageTypeBaseOs        ImageType = "base-os"
-	ImageTypeCloudImage    ImageType = "cloud-image"
-	ImageTypePreconfigured ImageType = "preconfigured"
-	ImageTypeSnapshot      ImageType = "snapshot"
+	ImageTypeCloudImage ImageType = "cloud-image"
 )
 
 var AllImageTypes = []ImageType{
-	ImageTypeBaseOs,
 	ImageTypeCloudImage,
-	ImageTypePreconfigured,
-	ImageTypeSnapshot,
 }
 
 // Defines values for InstanceAction.
@@ -721,11 +715,14 @@ type Snapshot struct {
 	// Region The region identifier.
 	Region Region `json:"region"`
 
-	// ResourceId The id of the resource (e.g. instance) that was snapshotted.
-	ResourceId string `json:"resource_id"`
-
 	// Size The storage size of this snapshot given in GiB.
 	Size int `json:"size"`
+
+	// SourceInstanceId The id of the source instance from which this snapshot was derived.
+	SourceInstanceId *string `json:"source_instance_id,omitempty"`
+
+	// SourceSnapshotId The id of the source snapshot from which this snapsot was derived.
+	SourceSnapshotId *string `json:"source_snapshot_id,omitempty"`
 
 	// Status The snapshot status.
 	Status    SnapshotStatus `json:"status"`
@@ -986,7 +983,6 @@ type UpdateFloatingIPJSONBody struct {
 type ListImagesPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
-	Type    *ImageType             `form:"type,omitempty" json:"type,omitempty"`
 }
 
 // ListInstancesPaginatedParams defines parameters for ListInstancesPaginated.
