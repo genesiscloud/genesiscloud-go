@@ -600,8 +600,8 @@ type Quota struct {
 	Capacity int `json:"capacity"`
 	Flavors  []struct {
 		FlavorName  string `json:"flavor_name"`
-		Per         string `json:"per"`
 		ProductName string `json:"product_name"`
+		Unit        string `json:"unit"`
 		Used        int    `json:"used"`
 	} `json:"flavors"`
 	Key  string `json:"key"`
