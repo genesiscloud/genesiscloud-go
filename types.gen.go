@@ -983,6 +983,7 @@ type UpdateFloatingIPJSONBody struct {
 type ListImagesPaginatedParams struct {
 	Page    *PageQueryParameter    `form:"page,omitempty" json:"page,omitempty"`
 	PerPage *PerPageQueryParameter `form:"per_page,omitempty" json:"per_page,omitempty"`
+	Type    *ImageType             `form:"type,omitempty" json:"type,omitempty"`
 }
 
 // ListInstancesPaginatedParams defines parameters for ListInstancesPaginated.
