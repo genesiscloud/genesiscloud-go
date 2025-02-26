@@ -19,12 +19,14 @@ const (
 	FilesystemStatusCreated  FilesystemStatus = "created"
 	FilesystemStatusCreating FilesystemStatus = "creating"
 	FilesystemStatusDeleting FilesystemStatus = "deleting"
+	FilesystemStatusError    FilesystemStatus = "error"
 )
 
 var AllFilesystemStatuss = []FilesystemStatus{
 	FilesystemStatusCreated,
 	FilesystemStatusCreating,
 	FilesystemStatusDeleting,
+	FilesystemStatusError,
 }
 
 // Defines values for FilesystemType.
@@ -106,40 +108,26 @@ var AllInstanceBillingTypes = []InstanceBillingType{
 // Defines values for InstanceStatus.
 const (
 	InstanceStatusActive         InstanceStatus = "active"
-	InstanceStatusBuild          InstanceStatus = "build"
-	InstanceStatusCopying        InstanceStatus = "copying"
 	InstanceStatusCreating       InstanceStatus = "creating"
 	InstanceStatusDeleting       InstanceStatus = "deleting"
-	InstanceStatusEnqueued       InstanceStatus = "enqueued"
 	InstanceStatusError          InstanceStatus = "error"
 	InstanceStatusPendingPayment InstanceStatus = "pending_payment"
 	InstanceStatusResetting      InstanceStatus = "resetting"
-	InstanceStatusRestarting     InstanceStatus = "restarting"
-	InstanceStatusShutoff        InstanceStatus = "shutoff"
 	InstanceStatusStarting       InstanceStatus = "starting"
 	InstanceStatusStopped        InstanceStatus = "stopped"
 	InstanceStatusStopping       InstanceStatus = "stopping"
-	InstanceStatusUnknown        InstanceStatus = "unknown"
-	InstanceStatusUpdating       InstanceStatus = "updating"
 )
 
 var AllInstanceStatuss = []InstanceStatus{
 	InstanceStatusActive,
-	InstanceStatusBuild,
-	InstanceStatusCopying,
 	InstanceStatusCreating,
 	InstanceStatusDeleting,
-	InstanceStatusEnqueued,
 	InstanceStatusError,
 	InstanceStatusPendingPayment,
 	InstanceStatusResetting,
-	InstanceStatusRestarting,
-	InstanceStatusShutoff,
 	InstanceStatusStarting,
 	InstanceStatusStopped,
 	InstanceStatusStopping,
-	InstanceStatusUnknown,
-	InstanceStatusUpdating,
 }
 
 // Defines values for OSType.
@@ -196,7 +184,6 @@ const (
 	SecurityGroupStatusCreating SecurityGroupStatus = "creating"
 	SecurityGroupStatusDeleting SecurityGroupStatus = "deleting"
 	SecurityGroupStatusError    SecurityGroupStatus = "error"
-	SecurityGroupStatusUpdating SecurityGroupStatus = "updating"
 )
 
 var AllSecurityGroupStatuss = []SecurityGroupStatus{
@@ -204,12 +191,10 @@ var AllSecurityGroupStatuss = []SecurityGroupStatus{
 	SecurityGroupStatusCreating,
 	SecurityGroupStatusDeleting,
 	SecurityGroupStatusError,
-	SecurityGroupStatusUpdating,
 }
 
 // Defines values for SnapshotStatus.
 const (
-	SnapshotStatusActive        SnapshotStatus = "active"
 	SnapshotStatusCreated       SnapshotStatus = "created"
 	SnapshotStatusCreating      SnapshotStatus = "creating"
 	SnapshotStatusDeleting      SnapshotStatus = "deleting"
@@ -218,7 +203,6 @@ const (
 )
 
 var AllSnapshotStatuss = []SnapshotStatus{
-	SnapshotStatusActive,
 	SnapshotStatusCreated,
 	SnapshotStatusCreating,
 	SnapshotStatusDeleting,
@@ -228,22 +212,18 @@ var AllSnapshotStatuss = []SnapshotStatus{
 
 // Defines values for VolumeStatus.
 const (
-	VolumeStatusAvailable     VolumeStatus = "available"
 	VolumeStatusCreated       VolumeStatus = "created"
 	VolumeStatusCreating      VolumeStatus = "creating"
 	VolumeStatusDeleting      VolumeStatus = "deleting"
 	VolumeStatusError         VolumeStatus = "error"
-	VolumeStatusInUse         VolumeStatus = "in-use"
 	VolumeStatusPendingDelete VolumeStatus = "pending_delete"
 )
 
 var AllVolumeStatuss = []VolumeStatus{
-	VolumeStatusAvailable,
 	VolumeStatusCreated,
 	VolumeStatusCreating,
 	VolumeStatusDeleting,
 	VolumeStatusError,
-	VolumeStatusInUse,
 	VolumeStatusPendingDelete,
 }
 
