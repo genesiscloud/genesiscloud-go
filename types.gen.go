@@ -144,11 +144,21 @@ var AllOSTypes = []OSType{
 // Defines values for Region.
 const (
 	RegionEUCDEMUC1  Region = "EUC-DE-MUC-1"
+	RegionEUWGBMNC1  Region = "EUW-GB-MNC-1"
+	RegionEUWNLAMS1  Region = "EUW-NL-AMS-1"
+	RegionNACAFTS1   Region = "NA-CA-FTS-1"
+	RegionNACAMNZ1   Region = "NA-CA-MNZ-1"
+	RegionNACAPRG1   Region = "NA-CA-PRG-1"
 	RegionNORDNOKRS1 Region = "NORD-NO-KRS-1"
 )
 
 var AllRegions = []Region{
 	RegionEUCDEMUC1,
+	RegionEUWGBMNC1,
+	RegionEUWNLAMS1,
+	RegionNACAFTS1,
+	RegionNACAMNZ1,
+	RegionNACAPRG1,
 	RegionNORDNOKRS1,
 }
 

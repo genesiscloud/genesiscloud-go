@@ -23,7 +23,7 @@ func run() error {
 		return err
 	}
 
-	resp, err := client.ListInstancesWithResponse(ctx, &genesiscloud.ListInstancesParams{
+	resp, err := client.ListInstancesPaginatedWithResponse(ctx, &genesiscloud.ListInstancesPaginatedParams{
 		Page:    pointer(1),
 		PerPage: pointer(100),
 	})
